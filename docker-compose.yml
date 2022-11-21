@@ -3,17 +3,19 @@ services:
   stats-server:
     build: stats-server
     container_name: stats-server
+    restart: always
     ports:
       - "9090:9090"
     depends_on:
       - stats-db
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://stats-db:5432/EwmStatsDb?encoding=utf8
-      - SPRING_DATASOURCE_USERNAME=statsroot
-      - SPRING_DATASOURCE_PASSWORD=statsroot
+      - SPRING_R2DBC_URL=r2dbc:postgresql://stats-db:5432/EwmStatsDb?encoding=utf8
+      - SPRING_R2DBC_USERNAME=statsroot
+      - SPRING_R2DBC_PASSWORD=statsroot
 
   stats-db:
     image: postgres:14-alpine
+    restart: always
     ports:
       - "6542:5432"
     environment:
@@ -24,6 +26,7 @@ services:
   ewm-service:
     build: ewm-service
     container_name: ewm-service
+    restart: always
     ports:
       - "8080:8080"
     depends_on:
@@ -38,6 +41,7 @@ services:
 
   ewm-db:
     image: postgres:14-alpine
+    restart: always
     ports:
       - "6541:5432"
     environment:

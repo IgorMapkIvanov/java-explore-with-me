@@ -5,6 +5,5 @@ CREATE TABLE IF NOT EXISTS ENDPOINTS
     app       VARCHAR(100)                            NOT NULL,
     uri       VARCHAR(100)                            NOT NULL,
     ip        VARCHAR(50)                             NOT NULL,
-    timestamp VARCHAR(50)                             NOT NULL
-
+    timestamp timestamp WITHOUT TIME ZONE             NOT NULL
 );

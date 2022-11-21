@@ -1,39 +1,49 @@
 package ru.practicim.ewmstatsserver.model;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Column;
+import org.springframework.data.relational.core.mapping.Table;
 
-import javax.persistence.*;
-
+import java.time.LocalDateTime;
+import java.util.Objects;
 
 /**
  * Класс <b>BookingDto</b> со свойствами:
  * <p><b>id</b> — Идентификатор записи;</p>
- * <p><b>app</b> — Идентификатор сервиса для которого записывается информация;</p>
- * <p><b>uri</b> — URI для которого был осуществлен запрос;</p>
+ * <p><b>app</b> — Идентификатор сервиса, для которого записывается информация;</p>
+ * <p><b>uri</b> — URI, для которого был осуществлен запрос;</p>
  * <p><b>ip</b> — IP-адрес пользователя, осуществившего запрос;</p>
- * <p><b>timestamp</b> — Дата и время, когда был совершен запрос к эндпоинту (в формате "yyyy-MM-dd HH:mm:ss");</p>
+ * <p><b>timestamp</b> — Дата и время, когда был совершен запрос к эндпоинту (в формате "yyyy-MM-dd HH:mm:ss").</p>
  */
-@Entity
+//@Entity
 @Table(name = "endpoints", schema = "public")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode
 public class EndpointHit {
     @Id
-    @Column(name = "id", columnDefinition = "bigint")
-    @GeneratedValue(strategy = GenerationType.IDENTITY,
-            generator = "endpoints_generator")
+    @Column("id")
+
+//    @GeneratedValue(strategy = GenerationType.IDENTITY,
+//            generator = "endpoints_generator")
     private Long id;
-    @Column(name = "app", nullable = false, length = 100)
+    @Column("app")
+//    @Column(name = "app", nullable = false, length = 100)
     private String app;
-    @Column(name = "uri", nullable = false, length = 100)
+    //    @Column(name = "uri", nullable = false, length = 100)
+    @Column("uri")
     private String uri;
-    @Column(name = "ip", nullable = false, length = 50)
+    //    @Column(name = "ip", nullable = false, length = 50)
+    @Column("ip")
     private String ip;
-    @Column(name = "timestamp", nullable = false, length = 50)
-    private String timestamp;
+    //    @Column(name = "timestamp", nullable = false, length = 50)
+    @Column("timestamp")
+    private LocalDateTime timestamp;
 
     @Override
     public String toString() {
@@ -51,5 +61,18 @@ public class EndpointHit {
             return "null";
         }
         return o.toString().replace("\n", "\n    ");
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || o.getClass() != this.getClass()) return false;
+        EndpointHit that = (EndpointHit) o;
+        return id != null && Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
     }
 }

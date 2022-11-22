@@ -8,7 +8,7 @@ services:
     depends_on:
       - stats-db
     environment:
-      - SPRING_DATASOURCE_URL=r2dbc:pool:postgresql://stats-db:5432/EwmStatsDb?encoding=utf8
+      - SPRING_DATASOURCE_URL=r2dbc:postgresql://stats-db:5432/EwmStatsDb?encoding=utf8
       - SPRING_DATASOURCE_USERNAME=statsroot
       - SPRING_DATASOURCE_PASSWORD=statsroot
 

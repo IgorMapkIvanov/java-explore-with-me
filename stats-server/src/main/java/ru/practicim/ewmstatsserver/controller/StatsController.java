@@ -24,7 +24,7 @@ import java.util.logging.Level;
 @RequestMapping(produces = MediaType.ALL_VALUE)
 @Validated
 public class StatsController {
-    private final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    private final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     private final StatsService statsService;
 
     @GetMapping(path = "/stats", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -45,7 +45,7 @@ public class StatsController {
 
     private LocalDateTime getLocalDateTime(String dateTime) {
         try {
-            return LocalDateTime.parse(dateTime, DATE_TIME_FORMATTER);
+            return LocalDateTime.parse(dateTime, dateTimeFormatter);
         } catch (DateTimeParseException e) {
             throw new DateTimeValidationException("Value: " + dateTime + ", can't be parsed to LocalDateTime");
         }

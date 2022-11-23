@@ -9,9 +9,9 @@ services:
     depends_on:
       - stats-db
     environment:
-      - SPRING_DATASOURCE_URL=r2dbc:postgresql://stats-db:5432/EwmStatsDb?encoding=utf8
-      - SPRING_DATASOURCE_USERNAME=statsroot
-      - SPRING_DATASOURCE_PASSWORD=statsroot
+      - SPRING_R2DBC_URL=r2dbc:postgresql://stats-db:5432/EwmStatsDb?encoding=utf8
+      - SPRING_R2DBC_USERNAME=statsroot
+      - SPRING_R2DBC_PASSWORD=statsroot
 
   stats-db:
     image: postgres:14-alpine

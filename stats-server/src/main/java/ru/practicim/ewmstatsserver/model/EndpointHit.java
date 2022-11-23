@@ -28,20 +28,13 @@ import java.util.Objects;
 public class EndpointHit {
     @Id
     @Column("id")
-
-//    @GeneratedValue(strategy = GenerationType.IDENTITY,
-//            generator = "endpoints_generator")
     private Long id;
     @Column("app")
-//    @Column(name = "app", nullable = false, length = 100)
     private String app;
-    //    @Column(name = "uri", nullable = false, length = 100)
     @Column("uri")
     private String uri;
-    //    @Column(name = "ip", nullable = false, length = 50)
     @Column("ip")
     private String ip;
-    //    @Column(name = "timestamp", nullable = false, length = 50)
     @Column("timestamp")
     private LocalDateTime timestamp;
 

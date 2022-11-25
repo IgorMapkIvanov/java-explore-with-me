@@ -1,9 +1,10 @@
 package ru.practicim.ewmstatsserver.dto;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
+
 import reactor.util.annotation.NonNull;
 
 import java.io.Serializable;
@@ -30,7 +31,7 @@ public class EndpointHitDto implements Serializable {
     @Override
     public String toString() {
         return "class EndpointHitDto {\n" +
-                "    id:       " + toIndentedString(id) + "\n" +
+                "    id:        " + toIndentedString(id) + "\n" +
                 "    app:       " + toIndentedString(app) + "\n" +
                 "    uri:       " + toIndentedString(uri) + "\n" +
                 "    ip:        " + toIndentedString(ip) + "\n" +

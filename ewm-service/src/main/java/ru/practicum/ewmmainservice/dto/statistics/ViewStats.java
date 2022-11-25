@@ -1,4 +1,4 @@
-package ru.practicim.ewmstatsserver.model;
+package ru.practicum.ewmmainservice.dto.statistics;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -7,20 +7,13 @@ import lombok.AllArgsConstructor;
 
 import java.util.Objects;
 
-/**
- * Класс <b>ViewStats</b> со свойствами:
- * <p><b>app</b> — Идентификатор сервиса;</p>
- * <p><b>uri</b> — URI, для которого был осуществлен запрос;</p>
- * <p><b>hits</b> — Количество просмотров.</p>
- */
-
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class ViewStats {
-    private String app;
     private String uri;
+    private String app;
     private Long hits;
 
     @Override

@@ -1,12 +1,13 @@
 package ru.practicim.ewmstatsserver.model;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
+
+import org.springframework.data.relational.core.mapping.Table;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
-import org.springframework.data.relational.core.mapping.Table;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -19,7 +20,6 @@ import java.util.Objects;
  * <p><b>ip</b> — IP-адрес пользователя, осуществившего запрос;</p>
  * <p><b>timestamp</b> — Дата и время, когда был совершен запрос к эндпоинту (в формате "yyyy-MM-dd HH:mm:ss").</p>
  */
-//@Entity
 @Table(name = "endpoints", schema = "public")
 @Getter
 @Setter
@@ -39,24 +39,6 @@ public class EndpointHit {
     private LocalDateTime timestamp;
 
     @Override
-    public String toString() {
-        return "class EndpointHit {\n" +
-                "    id:       " + toIndentedString(id) + "\n" +
-                "    app:       " + toIndentedString(app) + "\n" +
-                "    uri:       " + toIndentedString(uri) + "\n" +
-                "    ip:        " + toIndentedString(ip) + "\n" +
-                "    timestamp: " + toIndentedString(timestamp) + "\n" +
-                "}";
-    }
-
-    private String toIndentedString(Object o) {
-        if (o == null) {
-            return "null";
-        }
-        return o.toString().replace("\n", "\n    ");
-    }
-
-    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || o.getClass() != this.getClass()) return false;
@@ -67,5 +49,16 @@ public class EndpointHit {
     @Override
     public int hashCode() {
         return getClass().hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return "class EndpointHit {\n" +
+                "    id:        " + id + "\n" +
+                "    app:       " + app + "\n" +
+                "    uri:       " + uri + "\n" +
+                "    ip:        " + ip + "\n" +
+                "    timestamp: " + timestamp + "\n" +
+                "}";
     }
 }

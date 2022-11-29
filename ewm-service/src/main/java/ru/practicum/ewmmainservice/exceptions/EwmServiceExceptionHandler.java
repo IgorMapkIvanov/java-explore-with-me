@@ -32,6 +32,14 @@ public class EwmServiceExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(apiError, HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(DeleteCategoryException.class)
+    public ResponseEntity<Object> handleDeleteCategoryException(DeleteCategoryException e) {
+        ApiError apiError = new ApiError();
+        apiError.setMessage(e.getMessage());
+        apiError.setReason("Can't delete category");
+        return new ResponseEntity<>(apiError, HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(ValidationException.class)
     public ResponseEntity<Object> handleValidationException(ValidationException e) {
         ApiError apiError = new ApiError();

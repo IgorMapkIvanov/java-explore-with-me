@@ -12,22 +12,23 @@ import ru.practicum.ewmmainservice.services.categories.CategoryAdminService;
 @Validated
 @RequiredArgsConstructor
 @RestController
+@RequestMapping(path = "/admin/categories")
 public class CategoryAdminController {
     private final CategoryAdminService service;
 
-    @PatchMapping("/admin/categories")
+    @PatchMapping
     public CategoryDto updateCategory(@RequestBody CategoryDto categoryDto) {
         log.info("CATEGORY_ADMIN_CONTROLLER: Update category: {}", categoryDto);
         return service.updateCategory(categoryDto);
     }
 
-    @PostMapping("/admin/categories")
+    @PostMapping
     public CategoryDto postCategory(@RequestBody NewCategoryDto categoryDto) {
         log.info("CATEGORY_ADMIN_CONTROLLER: Post category: {}", categoryDto);
         return service.postCategory(categoryDto);
     }
 
-    @DeleteMapping("/admin/categories/{catId}")
+    @DeleteMapping("/{catId}")
     public void deleteCategory(@PathVariable Long catId) {
         log.info("CATEGORY_ADMIN_CONTROLLER: Delete category: {}", catId);
         service.deleteCategory(catId);

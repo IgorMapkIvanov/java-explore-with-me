@@ -8,7 +8,7 @@ import ru.practicum.ewmmainservice.models.User;
 @Component
 public class UserMapper {
     public static UserDto toUserDto(User user) {
-        return new UserDto(user.getId(), user.getEmail(), user.getName());
+        return new UserDto(user.getId(), user.getName(), user.getEmail());
     }
 
     public static User toUser(NewUserRequest newUserRequest) {

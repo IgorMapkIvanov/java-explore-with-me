@@ -30,6 +30,9 @@ public class StatsServiceImpl implements StatsService {
 
     @Override
     public Mono<EndpointHitDto> addEndpoint(EndpointHitDto endpointHitDto) {
+        String[] split = endpointHitDto.getUri().split("/");
+        endpointHitDto.setUri("/" + split[1]);
+        endpointHitDto.setUriId(split[2]);
         return statsRepository
                 .save(EndpointHitMapper.toEndpointHit(endpointHitDto))
                 .map(EndpointHitMapper::toEndpointHitDto)

@@ -13,6 +13,7 @@ public class EndpointHitMapper {
         return new EndpointHit(null,
                 endpointHitDto.getApp(),
                 endpointHitDto.getUri(),
+                endpointHitDto.getUriId(),
                 endpointHitDto.getIp(),
                 LocalDateTime.parse(endpointHitDto.getTimestamp(), formatter));
     }
@@ -21,6 +22,7 @@ public class EndpointHitMapper {
         return new EndpointHitDto(endpointHit.getId(),
                 endpointHit.getApp(),
                 endpointHit.getUri(),
+                endpointHit.getUriId(),
                 endpointHit.getIp(),
                 endpointHit.getTimestamp().format(formatter));
     }

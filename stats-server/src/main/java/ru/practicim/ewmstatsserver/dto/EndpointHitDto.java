@@ -1,10 +1,9 @@
 package ru.practicim.ewmstatsserver.dto;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
-
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import reactor.util.annotation.NonNull;
 
 import java.io.Serializable;
@@ -22,11 +21,11 @@ public class EndpointHitDto implements Serializable {
     private String app;
     @NonNull
     private String uri;
+    private String uriId;
     @NonNull
     private String ip;
     @NonNull
     private String timestamp;
-
 
     @Override
     public String toString() {
@@ -34,6 +33,7 @@ public class EndpointHitDto implements Serializable {
                 "    id:        " + toIndentedString(id) + "\n" +
                 "    app:       " + toIndentedString(app) + "\n" +
                 "    uri:       " + toIndentedString(uri) + "\n" +
+                "    uriId:     " + toIndentedString(uriId) + "\n" +
                 "    ip:        " + toIndentedString(ip) + "\n" +
                 "    timestamp: " + toIndentedString(timestamp) + "\n" +
                 "}";

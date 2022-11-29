@@ -1,13 +1,12 @@
 package ru.practicim.ewmstatsserver.model;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
-
-import org.springframework.data.relational.core.mapping.Table;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
+import org.springframework.data.relational.core.mapping.Table;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -33,6 +32,8 @@ public class EndpointHit {
     private String app;
     @Column("uri")
     private String uri;
+    @Column("uri_id")
+    private String uriId;
     @Column("ip")
     private String ip;
     @Column("timestamp")

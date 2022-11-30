@@ -5,7 +5,7 @@ import ru.practicum.ewmmainservice.models.Request;
 
 public class RequestMapper {
 
-    public static ParticipationRequestDto toRequestDto(Request request) {
+    public static ParticipationRequestDto toParticipationRequestDto(Request request) {
         return new ParticipationRequestDto(request.getId(),
                 request.getEvent().getId(),
                 request.getRequester().getId(),

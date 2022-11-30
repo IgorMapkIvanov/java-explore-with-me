@@ -1,6 +1,5 @@
 package ru.practicum.ewmmainservice.models;
 
-
 import lombok.*;
 import org.hibernate.Hibernate;
 import ru.practicum.ewmmainservice.enums.State;
@@ -51,6 +50,8 @@ public class Event {
     @Enumerated(EnumType.STRING)
     @Column(name = "state")
     private State state;
+    @Column(name = "views")
+    private Long views;
 
     @Override
     public boolean equals(Object o) {

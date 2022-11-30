@@ -1,32 +1,20 @@
 package ru.practicum.ewmmainservice.exceptions;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
+import org.springframework.http.HttpStatus;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
 
 @Getter
 @Setter
-@ToString
-@EqualsAndHashCode
-@NoArgsConstructor
+@RequiredArgsConstructor
+@Builder
 public class ApiError {
-    @JsonIgnore
-    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-    private String message;
-    private String reason;
-    private String timestamp;
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-
-    private List<String> errors;
-
-    public ApiError(List<String> errors, String reason, String message) {
-        this.errors = errors;
-        this.message = message;
-        this.reason = reason;
-        this.timestamp = LocalDateTime.now().format(formatter);
-    }
+    private final String message;
+    private final String reason;
+    private final HttpStatus status;
+    private final StackTraceElement[] errors;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private final LocalDateTime timestamp;
 }

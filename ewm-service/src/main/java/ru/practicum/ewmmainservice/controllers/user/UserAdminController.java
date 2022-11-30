@@ -2,10 +2,12 @@ package ru.practicum.ewmmainservice.controllers.user;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewmmainservice.dto.users.NewUserRequest;
 import ru.practicum.ewmmainservice.dto.users.UserDto;
+import ru.practicum.ewmmainservice.pageable.EwmPageable;
 import ru.practicum.ewmmainservice.services.users.UserAdminService;
 
 import javax.validation.constraints.Positive;
@@ -24,8 +26,9 @@ public class UserAdminController {
     public List<UserDto> getUsers(@RequestParam(name = "ids", required = false) List<Long> ids,
                                   @RequestParam(name = "from", required = false, defaultValue = "0") @PositiveOrZero int from,
                                   @RequestParam(name = "size", required = false, defaultValue = "10") @Positive int size) {
+        Pageable pageable = EwmPageable.of(from, size);
         log.info("USER_ADMIN_CONTROLLER: Get users by IDs = {}.", ids);
-        return service.getUsers(ids, from, size);
+        return service.getUsers(ids, pageable);
     }
 
     //POST requests

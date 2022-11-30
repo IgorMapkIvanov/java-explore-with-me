@@ -4,8 +4,8 @@ import lombok.*;
 import org.hibernate.Hibernate;
 
 import javax.persistence.*;
+import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 @Getter
 @Setter
@@ -26,8 +26,7 @@ public class Compilation {
     @JoinTable(name = "events_compilations", joinColumns = @JoinColumn(name = "compilation_id"),
             inverseJoinColumns = @JoinColumn(name = "event_id"))
     @ToString.Exclude
-    private Set<Event> events;
-
+    private List<Event> events;
 
     @Override
     public boolean equals(Object o) {

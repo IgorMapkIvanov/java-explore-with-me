@@ -46,6 +46,7 @@ CREATE TABLE IF NOT EXISTS events
     published_on       TIMESTAMP WITHOUT TIME ZONE,
     request_moderation BOOLEAN                                 NOT NULL,
     state              VARCHAR(50)                             NOT NULL,
+    views              BIGINT                                  NOT NULL,
     CONSTRAINT pk_events PRIMARY KEY (id)
 );
 CREATE INDEX IF NOT EXISTS fk_events_category_id ON events (category_id);

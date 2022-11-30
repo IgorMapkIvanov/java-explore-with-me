@@ -9,7 +9,7 @@ import lombok.AllArgsConstructor;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.NotBlank;
 
-import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -24,7 +24,7 @@ public class NewCompilationDto {
     private Boolean pinned;
     @NotNull
     @NotBlank
-    private List<Long> events;
+    private Set<Long> events;
 
     @Override
     public String toString() {

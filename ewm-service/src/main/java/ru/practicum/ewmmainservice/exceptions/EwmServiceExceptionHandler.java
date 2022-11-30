@@ -1,62 +1,57 @@
 package ru.practicum.ewmmainservice.exceptions;
 
-import lombok.NonNull;
-import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.context.request.WebRequest;
-import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.time.LocalDateTime;
 
 @RestControllerAdvice
-public class EwmServiceExceptionHandler extends ResponseEntityExceptionHandler {
-    @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<Object> handleRuntimeException(RuntimeException e) {
-        ApiError apiError = new ApiError(new ArrayList<>(List.of(ExceptionUtils.getStackFrames(e))),
-                "internal Server Error",
-                "Runtime error");
-        return new ResponseEntity<>(apiError, HttpStatus.INTERNAL_SERVER_ERROR);
+public class EwmServiceExceptionHandler {
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ApiError handleRuntimeException(RuntimeException e) {
+        return ApiError.builder()
+                .message(e.getMessage())
+                .reason("INTERNAL_SERVER_ERROR")
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .errors(e.getStackTrace())
+                .timestamp(LocalDateTime.now())
+                .build();
     }
 
-    @ExceptionHandler(NotFoundException.class)
-    public ResponseEntity<Object> handleEventNotFoundException(NotFoundException e) {
-        ApiError apiError = new ApiError();
-        apiError.setMessage(e.getMessage());
-        apiError.setReason("Not found error");
-        return new ResponseEntity<>(apiError, HttpStatus.NOT_FOUND);
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ApiError handleEventNotFoundException(NotFoundException e) {
+        return ApiError.builder()
+                .message(e.getMessage())
+                .reason(e.getReason())
+                .status(HttpStatus.NOT_FOUND)
+                .errors(e.getStackTrace())
+                .timestamp(LocalDateTime.now()).build();
     }
 
-    @ExceptionHandler(DeleteCategoryException.class)
-    public ResponseEntity<Object> handleDeleteCategoryException(DeleteCategoryException e) {
-        ApiError apiError = new ApiError();
-        apiError.setMessage(e.getMessage());
-        apiError.setReason("Can't delete category");
-        return new ResponseEntity<>(apiError, HttpStatus.BAD_REQUEST);
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ApiError handleDeleteCategoryException(DeleteCategoryException e) {
+        return ApiError.builder()
+                .message(e.getMessage())
+                .reason("Can't delete category")
+                .errors(e.getStackTrace())
+                .status(HttpStatus.BAD_REQUEST)
+                .timestamp(LocalDateTime.now())
+                .build();
     }
 
-    @ExceptionHandler(ValidationException.class)
-    public ResponseEntity<Object> handleValidationException(ValidationException e) {
-        ApiError apiError = new ApiError();
-        apiError.setErrors(new ArrayList<>(List.of(ExceptionUtils.getStackFrames(e))));
-        apiError.setMessage(e.getMessage());
-        apiError.setReason("Validation error");
-        return new ResponseEntity<>(apiError, HttpStatus.BAD_REQUEST);
-    }
-
-    @Override
-    protected @NonNull ResponseEntity<Object> handleMethodArgumentNotValid(@NonNull MethodArgumentNotValidException e,
-                                                                           @NonNull HttpHeaders headers,
-                                                                           @NonNull HttpStatus status,
-                                                                           @NonNull WebRequest request) {
-        ApiError apiError = new ApiError(new ArrayList<>(List.of(ExceptionUtils.getStackFrames(e))),
-                "Method Argument Not Valid",
-                "Only events with status \"PENDING\" and \"CANCELED\" can be changed by the user");
-        return new ResponseEntity<>(apiError, status);
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ApiError handleValidationException(ValidationException e) {
+        return ApiError.builder()
+                .message(e.getMessage())
+                .reason(e.getReason())
+                .status(HttpStatus.BAD_REQUEST)
+                .errors(e.getStackTrace())
+                .timestamp(LocalDateTime.now()).build();
     }
 }

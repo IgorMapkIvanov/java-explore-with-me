@@ -4,23 +4,23 @@ import lombok.NonNull;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
-public class EwnPageable implements Pageable {
+public class EwmPageable implements Pageable {
     private final int offset;
     private final int limit;
     private final Sort sort;
 
-    public EwnPageable(int offset, int limit, Sort sort) {
+    public EwmPageable(int offset, int limit, Sort sort) {
         this.offset = offset;
         this.limit = limit;
         this.sort = sort;
     }
 
     public static Pageable of(Integer from, Integer size) {
-        return new EwnPageable(from, size, Sort.unsorted());
+        return new EwmPageable(from, size, Sort.unsorted());
     }
 
     public static Pageable of(Integer from, Integer size, Sort sort) {
-        return new EwnPageable(from, size, sort);
+        return new EwmPageable(from, size, sort);
     }
 
     @Override
@@ -45,22 +45,22 @@ public class EwnPageable implements Pageable {
 
     @Override
     public @NonNull Pageable next() {
-        return new EwnPageable(offset + limit, limit, sort);
+        return new EwmPageable(offset + limit, limit, sort);
     }
 
     @Override
     public @NonNull Pageable previousOrFirst() {
-        return new EwnPageable(offset, limit, sort);
+        return new EwmPageable(offset, limit, sort);
     }
 
     @Override
     public @NonNull Pageable first() {
-        return new EwnPageable(offset, limit, sort);
+        return new EwmPageable(offset, limit, sort);
     }
 
     @Override
     public @NonNull Pageable withPage(int pageNumber) {
-        return new EwnPageable(offset + limit * pageNumber, limit, sort);
+        return new EwmPageable(offset + limit * pageNumber, limit, sort);
     }
 
     @Override

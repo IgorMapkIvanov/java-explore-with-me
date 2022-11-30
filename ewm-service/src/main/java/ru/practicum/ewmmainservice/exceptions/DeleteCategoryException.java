@@ -1,11 +1,7 @@
 package ru.practicum.ewmmainservice.exceptions;
 
-public class DeleteCategoryException extends Throwable {
-    public DeleteCategoryException(String message) {
-        super(message);
-    }
-
-    public DeleteCategoryException(String message, Throwable cause) {
-        super(message, cause);
+public class DeleteCategoryException extends EwmRuntimeException {
+    public DeleteCategoryException(String message, String reason) {
+        super(message, reason);
     }
 }

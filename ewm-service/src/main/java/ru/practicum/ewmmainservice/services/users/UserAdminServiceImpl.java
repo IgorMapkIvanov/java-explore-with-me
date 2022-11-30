@@ -10,7 +10,7 @@ import ru.practicum.ewmmainservice.dto.users.UserDto;
 import ru.practicum.ewmmainservice.exceptions.NotFoundException;
 import ru.practicum.ewmmainservice.mappers.users.UserMapper;
 import ru.practicum.ewmmainservice.models.User;
-import ru.practicum.ewmmainservice.pageable.EwnPageable;
+import ru.practicum.ewmmainservice.pageable.EwmPageable;
 import ru.practicum.ewmmainservice.repositories.UserRepository;
 
 import java.util.List;
@@ -27,27 +27,25 @@ public class UserAdminServiceImpl implements UserAdminService {
      * Get a list of users by ids.
      *
      * @param ids  {@link List} of {@link Long}
-     * @param from {@link Integer}
-     * @param size {@link Integer}
+     * @param pageable {@link EwmPageable Pageable}
      * @return {@link List} of {@link UserDto}
      */
     @Override
     @Transactional
-    public List<UserDto> getUsers(List<Long> ids, int from, int size) {
-        Pageable pageable = EwnPageable.of(from, size);
-        List<UserDto> dtoList;
+    public List<UserDto> getUsers(List<Long> ids, Pageable pageable) {
+        List<UserDto> userDtoList;
         if (!ids.isEmpty()) {
-            dtoList = userRepository.findAllByIds(ids, pageable).stream()
+            userDtoList = userRepository.findAllByIds(ids, pageable).stream()
                     .map(UserMapper::toUserDto)
                     .collect(Collectors.toUnmodifiableList());
             log.info("USER_ADMIN_SERVICE: Get users by IDs = {}.", ids);
-            return dtoList;
+            return userDtoList;
         }
-        dtoList = userRepository.findAll(pageable).stream()
+        userDtoList = userRepository.findAll(pageable).stream()
                 .map(UserMapper::toUserDto)
                 .collect(Collectors.toUnmodifiableList());
         log.info("USER_ADMIN_SERVICE: Get all users.");
-        return dtoList;
+        return userDtoList;
     }
 
     /**
@@ -86,7 +84,7 @@ public class UserAdminServiceImpl implements UserAdminService {
     private void checkUserInDb(Long id) {
         if (!userRepository.existsById(id)) {
             log.info("USER_ADMIN_SERVICE: User with ID = {}, not found!", id);
-            throw new NotFoundException(String.format("User with id = '%s' not found!", id));
+            throw new NotFoundException(String.format("User with id = '%s' not found!", id), "");
         }
     }
 
@@ -101,7 +99,7 @@ public class UserAdminServiceImpl implements UserAdminService {
         log.info("USER_ADMIN_SERVICE: Get user by ID = {}", id);
         return userRepository.findById(id).orElseThrow(()-> {
             log.info("USER_ADMIN_SERVICE: User with ID = {}, not found!", id);
-            throw new NotFoundException(String.format("User with id = '%s' not found!", id));
+            throw new NotFoundException(String.format("User with id = '%s' not found!", id), "");
         });
     }
 }

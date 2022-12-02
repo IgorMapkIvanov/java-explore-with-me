@@ -11,17 +11,16 @@ import ru.practicum.ewmmainservice.mappers.compilations.CompilationMapper;
 import ru.practicum.ewmmainservice.models.Compilation;
 import ru.practicum.ewmmainservice.models.Event;
 import ru.practicum.ewmmainservice.repositories.CompilationRepository;
-import ru.practicum.ewmmainservice.repositories.EventRepository;
+
+import javax.persistence.EntityManager;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional
 public class CompilationAdminServiceImpl implements CompilationAdminService {
-    private final EventRepository eventRepository;
-
     private final CompilationRepository compilationRepository;
-    private final CompilationMapper compilationMapper;
+    private final EntityManager entityManager;
 
     /**
      * Add new compilation.
@@ -32,10 +31,10 @@ public class CompilationAdminServiceImpl implements CompilationAdminService {
 
     @Override
     public CompilationDto addCompilation(NewCompilationDto newCompilationDto) {
-        CompilationDto savedCompilation = compilationMapper
-                .toCompilationDto(compilationRepository.save(compilationMapper.toCompilationFromNew(newCompilationDto)));
-        log.info("COMPILATION_ADMIN_SERVICE: Add compilation: ID = {}", savedCompilation.getId());
-        return savedCompilation;
+        Compilation compilation = compilationRepository.saveAndFlush(CompilationMapper.toCompilation(newCompilationDto));
+        entityManager.refresh(compilation);
+        log.info("COMPILATION_ADMIN_SERVICE: Add compilation: ID = {}", compilation.getId());
+        return CompilationMapper.toCompilationDto(compilation);
     }
 
     /**
@@ -58,9 +57,8 @@ public class CompilationAdminServiceImpl implements CompilationAdminService {
      */
     @Override
     public void deleteEventFromCompilation(Long compId, Long eventId) {
-        Compilation compilation = checkInDbAndReturnCompilation(compId);
-        Event event = checkInDbAndReturnEvent(eventId);
-        compilation.getEvents().remove(event);
+        Compilation compilations = checkInDbAndReturnCompilation(compId);
+        compilations.getEvents().remove(Event.builder().id(eventId).build());
         log.info("COMPILATION_ADMIN_SERVICE: Event with ID = {} delete from compilation with ID = {}", eventId, compId);
     }
 
@@ -72,11 +70,8 @@ public class CompilationAdminServiceImpl implements CompilationAdminService {
      */
     @Override
     public void addEventToCompilation(Long compId, Long eventId) {
-        Compilation compilation = checkInDbAndReturnCompilation(compId);
-        Event newEventToCompilation = checkInDbAndReturnEvent(eventId);
-        if (!compilation.getEvents().contains(newEventToCompilation)) {
-            compilation.getEvents().add(newEventToCompilation);
-        }
+        Compilation compilations = checkInDbAndReturnCompilation(compId);
+        compilations.getEvents().add(Event.builder().id(eventId).build());
         log.info("COMPILATION_ADMIN_SERVICE: Event with ID = {} add to compilation with ID = {}", eventId, compId);
     }
 
@@ -106,14 +101,6 @@ public class CompilationAdminServiceImpl implements CompilationAdminService {
             compilation.setPinned(true);
         }
         log.info("COMPILATION_ADMIN_SERVICE: Pin compilation with ID = {}", compId);
-    }
-
-    private Event checkInDbAndReturnEvent(Long id) {
-        return eventRepository.findById(id).orElseThrow(() -> {
-            String message = String.format("Event with ID = '%s', not found", id);
-            String reason = "Event not found";
-            throw new NotFoundException(message, reason);
-        });
     }
 
     private Compilation checkInDbAndReturnCompilation(Long id) {

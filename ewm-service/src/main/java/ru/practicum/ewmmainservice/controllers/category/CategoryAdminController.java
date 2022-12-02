@@ -8,6 +8,7 @@ import ru.practicum.ewmmainservice.dto.categories.CategoryDto;
 import ru.practicum.ewmmainservice.dto.categories.NewCategoryDto;
 import ru.practicum.ewmmainservice.services.categories.CategoryAdminService;
 
+import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 
 @Slf4j
@@ -19,13 +20,13 @@ public class CategoryAdminController {
     private final CategoryAdminService service;
 
     @PostMapping
-    public CategoryDto postCategory(@RequestBody NewCategoryDto categoryDto) {
+    public CategoryDto postCategory(@Valid @RequestBody NewCategoryDto categoryDto) {
         log.info("CATEGORY_ADMIN_CONTROLLER: Post category: {}", categoryDto);
         return service.postCategory(categoryDto);
     }
 
     @PatchMapping
-    public CategoryDto updateCategory(@RequestBody CategoryDto categoryDto) {
+    public CategoryDto updateCategory(@Valid @RequestBody CategoryDto categoryDto) {
         log.info("CATEGORY_ADMIN_CONTROLLER: Update category: {}", categoryDto);
         return service.updateCategory(categoryDto);
     }

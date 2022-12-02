@@ -1,31 +1,23 @@
 package ru.practicum.ewmmainservice.dto.requests;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
+import ru.practicum.ewmmainservice.enums.Status;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.*;
+
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
+@ToString
 @EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class ParticipationRequestDto {
     private Long id;
     private Long event;
     private Long requester;
-    private String created;
-    private String status;
-
-    @Override
-    public String toString() {
-        return "class ParticipationRequestDto {\n" +
-                "    id:        " + id + "\n" +
-                "    event:     " + event + "\n" +
-                "    requester: " + requester + "\n" +
-                "    created:   " + created + "\n" +
-                "    status:    " + status + "\n" +
-                "}";
-    }
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime created;
+    private Status status;
 }

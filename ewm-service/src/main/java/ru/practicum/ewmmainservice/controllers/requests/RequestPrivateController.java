@@ -3,6 +3,7 @@ package ru.practicum.ewmmainservice.controllers.requests;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewmmainservice.dto.requests.ParticipationRequestDto;
@@ -26,7 +27,7 @@ public class RequestPrivateController {
             @PathVariable @Positive Long userId,
             @RequestParam(name = "from", defaultValue = "0") @PositiveOrZero int from,
             @RequestParam(name = "size", defaultValue = "10") @Positive int size) {
-        Pageable pageable = EwmPageable.of(from, size);
+        Pageable pageable = EwmPageable.of(from, size, Sort.by(Sort.Direction.ASC));
         log.info("REQUEST_PRIVATE_CONTROLLER: Get user with ID = {} requests.", userId);
         return requestPrivateService.getUserRequests(userId, pageable);
     }

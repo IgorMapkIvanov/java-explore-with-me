@@ -22,13 +22,13 @@ public class CategoryPublicServiceImpl implements CategoryPublicService {
     /**
      * Get categories.
      *
-     * @param pageable  {@link Pageable}
+     * @param pageable {@link Pageable}
      * @return {@link List} of {@link CategoryDto}
      */
     @Override
     public List<CategoryDto> getCategories(Pageable pageable) {
         List<CategoryDto> categoryDtos = categoryRepository.findAll(pageable).stream()
-                .map(CategoryMapper::toCategoryDto)
+                .map(CategoryMapper::toDto)
                 .collect(Collectors.toUnmodifiableList());
         log.info("CATEGORY_PUBLIC_SERVICE: Get categories.");
         return categoryDtos;
@@ -37,14 +37,17 @@ public class CategoryPublicServiceImpl implements CategoryPublicService {
     /**
      * Get category by id.
      *
-     * @param catId  {@link Long}
+     * @param catId {@link Long}
      * @return {@link CategoryDto}
      */
     @Override
     public CategoryDto getCategoryById(Long catId) {
         log.info("CATEGORY_PUBLIC_SERVICE: Get category with ID = {}.", catId);
-        return CategoryMapper.toCategoryDto(categoryRepository.findById(catId)
-                .orElseThrow(() -> new NotFoundException(String.
-                        format("Category with id = '%s' not found.", catId), "Category not found")));
+        return CategoryMapper.toDto(categoryRepository.findById(catId)
+                .orElseThrow(() -> {
+                    String message = String.format("Category with id = '%s' not found.", catId);
+                    String reason = "Category not found";
+                    throw new NotFoundException(message, reason);
+                }));
     }
 }

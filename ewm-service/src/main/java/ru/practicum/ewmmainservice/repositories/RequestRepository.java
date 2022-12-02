@@ -1,22 +1,18 @@
 package ru.practicum.ewmmainservice.repositories;
 
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-import ru.practicum.ewmmainservice.enums.Status;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import ru.practicum.ewmmainservice.models.Event;
 import ru.practicum.ewmmainservice.models.Request;
+import ru.practicum.ewmmainservice.models.User;
 
 import java.util.List;
+import java.util.Optional;
 
-public interface RequestRepository extends JpaRepository<Request, Long> {
-    List<Request> findByEventId(Long eventId, Pageable pageable);
+public interface RequestRepository extends JpaRepository<Request, Long>, JpaSpecificationExecutor<Request> {
+    List<Request> findAllByRequester(User user);
 
-    List<Request> findByRequesterId(Long requesterId, Pageable pageable);
+    Optional<Request> findByIdAndRequester(Long id, User user);
 
-    Request findByEventIdAndRequesterId(Long eventId, Long requesterId);
-
-    Long countByEventIdAndStatus(Long eventId, Status status);
-
-    List<Request> findByEventIdAndStatus(Long eventId, Status status);
-
-    Boolean existsByEventIdAndStatus(Long eventId, Status status);
+    Optional<Request> findByRequesterAndEvent(User user, Event event);
 }

@@ -8,45 +8,49 @@ import ru.practicum.ewmmainservice.dto.compilations.CompilationDto;
 import ru.practicum.ewmmainservice.dto.compilations.NewCompilationDto;
 import ru.practicum.ewmmainservice.services.compilations.CompilationAdminService;
 
+import javax.validation.Valid;
+import javax.validation.constraints.Positive;
+
 @Slf4j
 @Validated
 @RequiredArgsConstructor
 @RestController
+@RequestMapping(path = "/admin/compilations")
 public class CompilationAdminController {
     private final CompilationAdminService service;
 
-    @PostMapping("/admin/compilations")
-    public CompilationDto addCompilation(@RequestBody NewCompilationDto newCompilationDto) {
+    @PostMapping()
+    public CompilationDto addCompilation(@Valid @RequestBody NewCompilationDto newCompilationDto) {
         log.info("COMPILATION_ADMIN_CONTROLLER: Add compilation: {}.", newCompilationDto);
         return service.addCompilation(newCompilationDto);
     }
 
-    @PatchMapping("/admin/compilations/{compId}/events/{eventId}")
-    public void addEventToCompilation(@PathVariable Long compId, @PathVariable Long eventId) {
+    @PatchMapping("/{compId}/events/{eventId}")
+    public void addEventToCompilation(@PathVariable @Positive Long compId, @PathVariable @Positive Long eventId) {
         log.info("COMPILATION_ADMIN_CONTROLLER: Add event with ID = {} to compilation with ID = {}.", eventId, compId);
         service.addEventToCompilation(compId, eventId);
     }
 
-    @PatchMapping("/admin/compilations/{compId}/pin")
-    public void pinCompilationToHomepage(@PathVariable Long compId) {
+    @PatchMapping("/{compId}/pin")
+    public void pinCompilationToHomepage(@PathVariable @Positive Long compId) {
         log.info("COMPILATION_ADMIN_CONTROLLER: Pin compilation with ID = {} to homepage.", compId);
         service.pinCompilationToHomepage(compId);
     }
 
-    @DeleteMapping("/admin/compilations/{compId}/events/{eventId}")
-    public void deleteEventFromCompilation(@PathVariable Long compId, @PathVariable Long eventId) {
+    @DeleteMapping("/{compId}/events/{eventId}")
+    public void deleteEventFromCompilation(@PathVariable @Positive Long compId, @PathVariable @Positive Long eventId) {
         log.info("COMPILATION_ADMIN_CONTROLLER: Delete event with ID = {} from compilation with ID = {}.", eventId, compId);
         service.deleteEventFromCompilation(compId, eventId);
     }
 
-    @DeleteMapping("/admin/compilations/{compId}/pin")
-    public void unpinCompilation(@PathVariable Long compId) {
+    @DeleteMapping("/{compId}/pin")
+    public void unpinCompilation(@PathVariable @Positive Long compId) {
         log.info("COMPILATION_ADMIN_CONTROLLER: Unpin compilation with ID = {} from homepage.", compId);
         service.unpinCompilation(compId);
     }
 
-    @DeleteMapping("/admin/compilations/{compId}")
-    public void deleteCompilation(@PathVariable Long compId) {
+    @DeleteMapping("/{compId}")
+    public void deleteCompilation(@PathVariable @Positive Long compId) {
         log.info("COMPILATION_ADMIN_CONTROLLER: Delete compilation with ID = {}.", compId);
         service.deleteCompilation(compId);
     }

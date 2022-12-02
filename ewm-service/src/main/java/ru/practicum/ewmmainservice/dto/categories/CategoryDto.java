@@ -1,25 +1,16 @@
 package ru.practicum.ewmmainservice.dto.categories;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
+import lombok.*;
 
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Positive;
 import javax.validation.constraints.NotBlank;
 
 @Getter
 @Setter
-@EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class CategoryDto {
-    @NotNull
-    @Positive
     private Long id;
-    @NotNull
     @NotBlank
     private String name;
 

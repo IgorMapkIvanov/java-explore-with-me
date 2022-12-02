@@ -18,7 +18,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class CompilationPublicServiceImpl implements CompilationPublicService {
     private final CompilationRepository compilationRepository;
-    private final CompilationMapper compilationMapper;
 
     /**
      * Get compilations.
@@ -32,12 +31,12 @@ public class CompilationPublicServiceImpl implements CompilationPublicService {
         if (pinned == null) {
             log.info("COMPILATION_PUBLIC_SERVICE: Get compilations without pinned.");
             return compilationRepository.findAll(pageable).stream()
-                    .map(compilationMapper::toCompilationDto)
+                    .map(CompilationMapper::toCompilationDto)
                     .collect(Collectors.toUnmodifiableList());
         } else {
             log.info("COMPILATION_PUBLIC_SERVICE: Get compilations with pinned = {}.", pinned);
             return compilationRepository.findByPinned(pinned, pageable).stream()
-                    .map(compilationMapper::toCompilationDto)
+                    .map(CompilationMapper::toCompilationDto)
                     .collect(Collectors.toUnmodifiableList());
         }
     }
@@ -56,6 +55,6 @@ public class CompilationPublicServiceImpl implements CompilationPublicService {
             throw new NotFoundException(message, reason);
         });
         log.info("COMPILATION_PUBLIC_SERVICE: Get compilations with ID = {}.", compId);
-        return compilationMapper.toCompilationDto(compilation);
+        return CompilationMapper.toCompilationDto(compilation);
     }
 }

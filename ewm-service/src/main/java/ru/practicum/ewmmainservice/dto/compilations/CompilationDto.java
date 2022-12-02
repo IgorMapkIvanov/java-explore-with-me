@@ -1,42 +1,69 @@
 package ru.practicum.ewmmainservice.dto.compilations;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
+import lombok.*;
 
-import ru.practicum.ewmmainservice.dto.events.EventShortDto;
-
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Positive;
 import javax.validation.constraints.NotBlank;
-import java.util.List;
+import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Getter
 @Setter
-@EqualsAndHashCode
-@NoArgsConstructor
+@ToString
+@RequiredArgsConstructor
 @AllArgsConstructor
+@Builder
 public class CompilationDto {
-    @NotNull
-    @Positive
     private Long id;
-    @NotNull
-    @NotBlank
-    private String title;
-    @NotNull
-    @NotBlank
+    @Builder.Default
+    private Set<EventShortDto> events = new HashSet<>();
     private Boolean pinned;
-    private List<EventShortDto> events;
+    private String title;
 
-    @Override
-    public String toString() {
-        return "class CompilationDto {\n" +
-                "    id:     " + id + "\n" +
-                "    title:  " + title + "\n" +
-                "    pinned: " + pinned + "\n" +
-                "    events: " + events + "\n" +
-                "}";
+    @Getter
+    @Setter
+    @ToString
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class EventShortDto {
+        private Long id;
+        @NotBlank
+        private String annotation;
+        @NotNull
+        private CategoryDto category;
+        private Long confirmedRequests;
+        @NotNull
+        private LocalDateTime eventDate;
+        @NotNull
+        private UserShortDto initiator;
+        @NotNull
+        private Boolean paid;
+        @NotNull
+        private String title;
+        private Long views;
+
+        @Getter
+        @Setter
+        @ToString
+        @NoArgsConstructor
+        @AllArgsConstructor
+        @Builder
+        public static class UserShortDto {
+            private Long id;
+            private String name;
+        }
+
+        @Getter
+        @Setter
+        @ToString
+        @NoArgsConstructor
+        @AllArgsConstructor
+        @Builder
+        public static class CategoryDto {
+            private Long id;
+            private String name;
+        }
     }
 }

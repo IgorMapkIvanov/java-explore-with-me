@@ -78,7 +78,7 @@ public class CategoryAdminServiceImpl implements CategoryAdminService {
      * @param catId {@link Long}
      */
     private void checkEventWithCategory(Long catId) {
-        if (!eventRepository.findByCategoryId(catId).isEmpty()) {
+        if (!eventRepository.findByCategory(catId).isEmpty()) {
             String message = String.format("Event in db belongs to category with id = '%s'", catId);
             String reason = "Category is used in the event";
             throw new DeleteCategoryException(message, reason);

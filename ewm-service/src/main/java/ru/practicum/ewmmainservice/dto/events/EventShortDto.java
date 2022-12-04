@@ -1,66 +1,57 @@
 package ru.practicum.ewmmainservice.dto.events;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
-
-import ru.practicum.ewmmainservice.dto.categories.CategoryDto;
-import ru.practicum.ewmmainservice.dto.locations.Location;
-import ru.practicum.ewmmainservice.dto.users.UserShortDto;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.*;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
-@EqualsAndHashCode
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class EventShortDto {
+
     private Long id;
-    @NotNull
-    @NotBlank
-    private String title;
-    @NotNull
     @NotBlank
     private String annotation;
     @NotNull
-    @NotBlank
-    private String description;
-    @NotNull
-    @NotBlank
-    private String eventDate;
-    @NotNull
-    @NotBlank
-    private Location location;
-    @NotNull
-    @NotBlank
     private CategoryDto category;
+    private Long confirmedRequests;
     @NotNull
-    @NotBlank
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime eventDate;
+    @NotNull
+    private UserShortDto initiator;
+    @NotNull
     private Boolean paid;
     @NotNull
-    @NotBlank
-    private UserShortDto initiator;
-    private Long confirmedRequests;
-    private Long views;
+    private String title;
+    @Builder.Default
+    private Long views = 0L;
 
-    @Override
-    public String toString() {
-        return "class EventShortDto {\n" +
-                "    id:                " + id + "\n" +
-                "    title:             " + title + "\n" +
-                "    annotation:        " + annotation + "\n" +
-                "    description:       " + description + "\n" +
-                "    eventDate:         " + eventDate + "\n" +
-                "    location:          " + location + "\n" +
-                "    category:          " + category + "\n" +
-                "    paid:              " + paid + "\n" +
-                "    initiator:         " + initiator + "\n" +
-                "    confirmedRequests: " + confirmedRequests + "\n" +
-                "    views:             " + views + "\n" +
-                "}";
+    @Getter
+    @Setter
+    @ToString
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class UserShortDto {
+        private Long id; //Идентификатор
+        private String name; //Имя
+    }
+
+    @Getter
+    @Setter
+    @ToString
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class CategoryDto {
+        private Long id; //Идентификатор категории
+        private String name; //Название категории
     }
 }

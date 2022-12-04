@@ -2,6 +2,7 @@ package ru.practicum.ewmmainservice.models;
 
 import lombok.*;
 import org.hibernate.Hibernate;
+import ru.practicum.ewmmainservice.dto.locations.Location;
 import ru.practicum.ewmmainservice.enums.State;
 
 import javax.persistence.*;
@@ -11,47 +12,57 @@ import java.util.Objects;
 @Getter
 @Setter
 @ToString
-@NoArgsConstructor
+@RequiredArgsConstructor
 @AllArgsConstructor
 @Entity
 @Table(name = "events")
+@Builder
 public class Event {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "title", nullable = false)
-    private String title;
-    @Column(name = "annotation", nullable = false)
+    @Column(name = "annotation", length = 2000)
     private String annotation;
-    @Column(name = "description", nullable = false)
+    @ManyToOne()
+    @JoinColumn(name = "categories_id")
+    private Category categories;
+    @Builder.Default
+    private Long confirmedRequests = 0L;
+    @Column(name = "created_on")
+    private LocalDateTime createdOn;
+    @Column(name = "description", length = 7000)
     private String description;
-    @Column(name = "event_date", nullable = false)
+    @Column(name = "event_date")
     private LocalDateTime eventDate;
-    @Column(name = "lat", nullable = false)
-    private Float lat;
-    @Column(name = "lon", nullable = false)
-    private Float lon;
-    @ManyToOne
-    @JoinColumn(name = "category_id")
-    private Category category;
-    @Column(name = "paid", nullable = false)
-    private Boolean paid;
-    @Column(name = "participant_limit")
-    private Long participantLimit;
     @ManyToOne
     @JoinColumn(name = "initiator_id")
     private User initiator;
-    @Column(name = "created_on", nullable = false)
-    private LocalDateTime createdOn;
+    @Embedded
+    private Location location;
+    @Column(name = "paid")
+    private Boolean paid;
+    @Builder.Default
+    @Column(name = "participant_limit")
+    private Integer participantLimit = 0;
     @Column(name = "published_on")
     private LocalDateTime publishedOn;
     @Column(name = "request_moderation")
-    private Boolean requestModeration;
-    @Enumerated(EnumType.STRING)
+    @Builder.Default
+    private Boolean requestModeration = true;
     @Column(name = "state")
+    @Enumerated
     private State state;
-    @Column(name = "views")
-    private Long views;
+    @Column(name = "title")
+    private String title;
+
+    public void incrementConfirmedRequests() {
+        confirmedRequests++;
+    }
+
+    public void decrementConfirmedRequests() {
+        confirmedRequests--;
+    }
 
     @Override
     public boolean equals(Object o) {

@@ -1,29 +1,18 @@
 package ru.practicum.ewmmainservice.dto.locations;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
+import lombok.*;
 
-import javax.validation.constraints.NotNull;
+import javax.persistence.Embeddable;
 
 @Getter
 @Setter
-@EqualsAndHashCode
-@NoArgsConstructor
+@ToString
+@RequiredArgsConstructor
 @AllArgsConstructor
+@Builder
+@Embeddable
 public class Location {
-    @NotNull
     private Float lat;
-    @NotNull
     private Float lon;
-
-    @Override
-    public String toString() {
-        return "class Location {\n" +
-                "    lat: " + lat + "\n" +
-                "    lon: " + lon + "\n" +
-                "}";
-    }
+    private String descLocation;
 }

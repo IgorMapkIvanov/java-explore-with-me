@@ -1,73 +1,79 @@
 package ru.practicum.ewmmainservice.dto.events;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.*;
+import ru.practicum.ewmmainservice.enums.State;
 
-import ru.practicum.ewmmainservice.dto.categories.CategoryDto;
-import ru.practicum.ewmmainservice.dto.locations.Location;
-import ru.practicum.ewmmainservice.dto.users.UserShortDto;
-
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
-@EqualsAndHashCode
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class EventFullDto {
-    private Long id;
-    @NotNull
+
+    private Long id; //Идентификатор
     @NotBlank
-    private String title;
+    private String annotation; //Краткое описание
     @NotNull
-    @NotBlank
-    private String annotation;
+    private CategoryDto category;
+    private Long confirmedRequests;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime createdOn;
     private String description;
     @NotNull
-    @NotBlank
-    private String eventDate;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime eventDate;
     @NotNull
-    @NotBlank
+    private UserShortDto initiator;
+    @NotNull
     private Location location;
     @NotNull
-    @NotBlank
-    private CategoryDto category;
-    @NotNull
-    @NotBlank
     private Boolean paid;
-    private Long participantLimit;
-    @NotNull
-    @NotBlank
-    private UserShortDto initiator;
-    private String createdOn;
-    private String publishedOn;
+    private Integer participantLimit;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime publishedOn;
     private Boolean requestModeration;
-    private String state;
-    private Long confirmedRequests;
-    private Long views;
+    private State state;
+    @NotNull
+    private String title;
+    @Builder.Default
+    private Long views = 0L;
 
-    @Override
-    public String toString() {
-        return "class EventFullDto {\n" +
-                "    id:                " + id + "\n" +
-                "    title:             " + title + "\n" +
-                "    annotation:        " + annotation + "\n" +
-                "    description:       " + description + "\n" +
-                "    eventDate:         " + eventDate + "\n" +
-                "    location:          " + location + "\n" +
-                "    category:          " + category + "\n" +
-                "    paid:              " + paid + "\n" +
-                "    participantLimit:  " + participantLimit + "\n" +
-                "    initiator:         " + initiator + "\n" +
-                "    createdOn:         " + createdOn + "\n" +
-                "    publishedOn:       " + publishedOn + "\n" +
-                "    requestModeration: " + requestModeration + "\n" +
-                "    confirmedRequests: " + confirmedRequests + "\n" +
-                "    views:             " + views + "\n" +
-                "}";
+    @Getter
+    @Setter
+    @ToString
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class UserShortDto {
+        private Long id; //Идентификатор
+        private String name; //Имя
+    }
+
+    @Getter
+    @Setter
+    @ToString
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class CategoryDto {
+        private Long id; //Идентификатор категории
+        private String name; //Название категории
+    }
+
+    @Getter
+    @Setter
+    @ToString
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class Location {
+        private Float lat; //Широта
+        private Float lon; //Долгота
     }
 }

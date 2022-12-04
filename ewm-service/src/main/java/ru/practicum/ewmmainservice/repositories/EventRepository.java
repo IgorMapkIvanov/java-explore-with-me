@@ -1,21 +1,22 @@
 package ru.practicum.ewmmainservice.repositories;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
+import ru.practicum.ewmmainservice.enums.State;
 import ru.practicum.ewmmainservice.models.Event;
+import ru.practicum.ewmmainservice.models.User;
 
 import java.util.List;
+import java.util.Optional;
 
-public interface EventRepository extends JpaRepository<Event, Long> {
-    Page<Event> findByInitiatorId(Long userId, Pageable pageable);
+public interface EventRepository extends JpaRepository<Event, Long>, JpaSpecificationExecutor<Event> {
+    @Query("select e from Event e where e.categories = ?1")
+    List<Event> findByCategory(Long catId);
 
-    List<Event> findByCategoryId(Long catId, Pageable pageable);
+    Optional<Event> findByIdAndInitiator(Long eventId, User user);
 
-    @Query("select event from Event event where (:users is null or event.initiator.id in :users) " +
-            "and (:states is null or event.state in :states) " +
-            "and (:categories is null or event.category.id in :categories) " +
-            "and (event.eventDate > :rangeStart and event.eventDate < :rangeEnd)")
-    List<Event> searchAllEventsForAdmin(List<Long> users, List<String> states, List<Long> categories, String rangeStart, String rangeEnd, Pageable pageable);
+    Optional<Event> findByIdAndState(Long eventId, State state);
+
+    List<Event> findAllByInitiator(User user);
 }

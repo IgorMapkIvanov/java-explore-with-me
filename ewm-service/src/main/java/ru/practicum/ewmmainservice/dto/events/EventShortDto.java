@@ -14,7 +14,6 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 public class EventShortDto {
-
     private Long id;
     @NotBlank
     private String annotation;
@@ -40,8 +39,8 @@ public class EventShortDto {
     @AllArgsConstructor
     @Builder
     public static class UserShortDto {
-        private Long id; //Идентификатор
-        private String name; //Имя
+        private Long id;
+        private String name;
     }
 
     @Getter
@@ -51,7 +50,7 @@ public class EventShortDto {
     @AllArgsConstructor
     @Builder
     public static class CategoryDto {
-        private Long id; //Идентификатор категории
-        private String name; //Название категории
+        private Long id;
+        private String name;
     }
 }

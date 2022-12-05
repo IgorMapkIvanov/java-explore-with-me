@@ -21,35 +21,33 @@ import java.util.List;
 @RestController
 @RequestMapping(path = "/admin/users")
 public class UserAdminController {
-    private final UserAdminService userAdminServiceice;
+    private final UserAdminService userAdminService;
 
-    //GET requests
     @GetMapping
     public List<UserDto> getUsers(@RequestParam(name = "ids", required = false) List<Long> ids,
-                                  @RequestParam(name = "from", required = false, defaultValue = "0") @PositiveOrZero int from,
-                                  @RequestParam(name = "size", required = false, defaultValue = "10") @Positive int size) {
+                                  @RequestParam(name = "from", required = false, defaultValue = "0")
+                                  @PositiveOrZero int from,
+                                  @RequestParam(name = "size", required = false, defaultValue = "10")
+                                  @Positive int size) {
         Pageable pageable = EwmPageable.of(from, size);
         log.info("USER_ADMIN_CONTROLLER: Get users by IDs = {}.", ids);
-        return userAdminServiceice.getUsers(ids, pageable);
+        return userAdminService.getUsers(ids, pageable);
     }
 
-    //POST requests
     @PostMapping
     public UserDto addUser(@Valid @RequestBody NewUserRequest newUserRequest) {
         log.info("USER_ADMIN_CONTROLLER: Add new user: {}.", newUserRequest);
-        return userAdminServiceice.addUser(newUserRequest);
+        return userAdminService.addUser(newUserRequest);
     }
 
-    //PATCH requests
     @PatchMapping
     public UserDto edit(@Valid @RequestBody UserDto usersDto) {
-        return userAdminServiceice.editUser(usersDto);
+        return userAdminService.editUser(usersDto);
     }
 
-    //DELETE requests
     @DeleteMapping("/{userId}")
     public void deleteUser(@PathVariable @Positive Long userId) {
         log.info("USER_ADMIN_CONTROLLER: Delete user with ID = {}.", userId);
-        userAdminServiceice.deleteUser(userId);
+        userAdminService.deleteUser(userId);
     }
 }

@@ -1,7 +1,6 @@
 package ru.practicum.ewmmainservice.config;
 
 import lombok.NonNull;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 import ru.practicum.ewmmainservice.services.statistics.StatsService;
@@ -9,7 +8,6 @@ import ru.practicum.ewmmainservice.services.statistics.StatsService;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@Slf4j
 public class StatsHandle implements HandlerInterceptor {
     private final StatsService statsService;
 

@@ -16,15 +16,14 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @SuperBuilder
 public abstract class EventBaseDto {
-
     @Size(min = 20)
-    @Size(max = 2000)
+    @Size(max = 1000)
     @NotBlank
     protected String annotation;
     @NotNull
     protected Long category;
     @Size(min = 20)
-    @Size(max = 7000)
+    @Size(max = 5000)
     @NotBlank
     protected String description;
     @NotNull
@@ -35,6 +34,6 @@ public abstract class EventBaseDto {
     @Builder.Default
     protected Integer participantLimit = 0;
     @Size(min = 3)
-    @Size(max = 120)
+    @Size(max = 255)
     protected String title;
 }

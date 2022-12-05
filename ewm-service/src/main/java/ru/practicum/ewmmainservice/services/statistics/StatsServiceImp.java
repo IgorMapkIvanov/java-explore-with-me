@@ -29,7 +29,6 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 public class StatsServiceImp implements StatsService {
-
     @Value("${stats-server.url}")
     private String serverUrl;
     private final ObjectMapper objectMapper;
@@ -50,12 +49,14 @@ public class StatsServiceImp implements StatsService {
     }
 
     @Override
-    public List<EventShortDto> getViewStats(HttpServletRequest request, List<EventShortDto> eventShortDtoList) throws URISyntaxException, IOException, InterruptedException {
+    public List<EventShortDto> getViewStats(HttpServletRequest request, List<EventShortDto> eventShortDtoList)
+            throws URISyntaxException, IOException, InterruptedException {
         List<String> uris = eventShortDtoList.stream()
                 .map(el -> "/events/" + el.getId().toString())
                 .collect(Collectors.toList());
         List<ViewStatsDto> statsViewDtoList = getStats(uris);
-        Map<String, ViewStatsDto> statsViewDtoMap = statsViewDtoList.stream().collect(Collectors.toMap(ViewStatsDto::getUri, v -> v));
+        Map<String, ViewStatsDto> statsViewDtoMap = statsViewDtoList.stream()
+                .collect(Collectors.toMap(ViewStatsDto::getUri, v -> v));
         eventShortDtoList.forEach(el -> {
             String key = "/events/" + el.getId().toString();
             ViewStatsDto stats = new ViewStatsDto();
@@ -67,7 +68,8 @@ public class StatsServiceImp implements StatsService {
     }
 
     @Override
-    public EventFullDto getViewStats(HttpServletRequest request, EventFullDto eventFullDto) throws URISyntaxException, IOException, InterruptedException {
+    public EventFullDto getViewStats(HttpServletRequest request, EventFullDto eventFullDto)
+            throws URISyntaxException, IOException, InterruptedException {
         List<String> uris = List.of("/events/" + eventFullDto.getId().toString());
         List<ViewStatsDto> statsViewDto = getStats(uris);
         Long view = (statsViewDto.size() != 0) ? statsViewDto.get(0).getHits() : 0L;
@@ -76,7 +78,8 @@ public class StatsServiceImp implements StatsService {
         return eventFullDto;
     }
 
-    private void statsHit(HttpServletRequest request, List<String> uris) throws JsonProcessingException, URISyntaxException {
+    private void statsHit(HttpServletRequest request, List<String> uris)
+            throws JsonProcessingException, URISyntaxException {
         List<EndpointHitDto> endpointHitDtos = uris.stream()
                 .map(uri -> EndpointHitDto.builder()
                         .app("ewm-main-service")
@@ -105,10 +108,13 @@ public class StatsServiceImp implements StatsService {
                 .thenApply(HttpResponse::statusCode);
     }
 
-    private List<ViewStatsDto> getStats(List<String> uris) throws URISyntaxException, IOException, InterruptedException {
+    private List<ViewStatsDto> getStats(List<String> uris)
+            throws URISyntaxException, IOException, InterruptedException {
         URI uri = new URIBuilder(serverUrl + "/stats")
-                .addParameter("start", LocalDateTime.now().minusMonths(1).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
-                .addParameter("end", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
+                .addParameter("start",
+                        LocalDateTime.now().minusMonths(1).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
+                .addParameter("end",
+                        LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
                 .addParameter("uris", listToString(uris))
                 .build();
 
@@ -117,7 +123,8 @@ public class StatsServiceImp implements StatsService {
                 .GET()
                 .build();
 
-        HttpResponse<String> response = HttpClient.newHttpClient().send(statRequest, HttpResponse.BodyHandlers.ofString());
+        HttpResponse<String> response = HttpClient.newHttpClient()
+                .send(statRequest, HttpResponse.BodyHandlers.ofString());
         log.warn("response.body() - {}", response.body());
         return objectMapper.readValue(response.body(), new TypeReference<>() {
         });

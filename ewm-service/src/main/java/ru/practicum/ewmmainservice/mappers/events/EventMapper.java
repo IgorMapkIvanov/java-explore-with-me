@@ -12,7 +12,6 @@ import ru.practicum.ewmmainservice.models.User;
 import java.time.LocalDateTime;
 
 public class EventMapper {
-
     public static Event toEvent(Long userId, NewEventDto newEventDto) {
         return Event.builder()
                 .annotation(newEventDto.getAnnotation())

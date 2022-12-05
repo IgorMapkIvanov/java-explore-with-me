@@ -16,7 +16,6 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class CategoryPublicServiceImpl implements CategoryPublicService {
-
     private final CategoryRepository categoryRepository;
 
     /**

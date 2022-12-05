@@ -80,6 +80,7 @@ public class EventAdminServiceImpl implements EventAdminService {
     @Override
     @Transactional
     public EventFullDto updateEvent(Long eventId, NewEventDto newEventDto) {
+        log.info("EVENT_ADMIN_SERVICE: Update event with ID = {}", eventId);
         if (LocalDateTime.now().plusHours(2).isAfter(newEventDto.getEventDate())) {
             String message = "The date of the event must be later than 2 hours from the current";
             String reason = "Incorrect date";
@@ -114,6 +115,7 @@ public class EventAdminServiceImpl implements EventAdminService {
     @Override
     @Transactional
     public EventFullDto publishEvent(Long eventId) {
+        log.info("EVENT_ADMIN_SERVICE: Publish event with ID = {}", eventId);
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> {
                     String message = String.format("Event with ID = %s not found", eventId);
@@ -134,6 +136,7 @@ public class EventAdminServiceImpl implements EventAdminService {
     @Override
     @Transactional
     public EventFullDto rejectEvent(Long eventId) {
+        log.info("EVENT_ADMIN_SERVICE: Reject event with ID = {}", eventId);
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> {
                     String message = String.format("Event with ID = %s not found", eventId);

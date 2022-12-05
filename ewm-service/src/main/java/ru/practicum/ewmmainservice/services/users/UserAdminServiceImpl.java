@@ -23,7 +23,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class UserAdminServiceImpl implements UserAdminService {
-
     private final UserRepository userRepository;
 
     /**

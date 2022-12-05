@@ -7,8 +7,6 @@ import ru.practicum.ewmmainservice.dto.users.UserDto;
 import java.util.List;
 
 public interface UserAdminService {
-
-
     List<UserDto> getUsers(List<Long> ids, Pageable pageable);
 
     UserDto addUser(NewUserRequest newUserRequest);

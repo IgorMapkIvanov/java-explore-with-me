@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewmmainservice.dto.requests.ParticipationRequestDto;
 import ru.practicum.ewmmainservice.enums.State;
@@ -27,12 +26,13 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class RequestPrivateServiceImpl implements RequestPrivateService {
-    //TODO add logging
     private final RequestRepository requestRepository;
     private final EventRepository eventRepository;
 
     @Override
     public List<ParticipationRequestDto> getAllRequest(Long userId, Long eventId, Pageable pageable) {
+        log.info("REQUEST_PRIVATE_SERVICE: Get all requests for user with ID = {} and event with ID = {}.",
+                userId, eventId);
         List<Event> events = eventRepository.findAllByInitiator(User.builder().id(userId).build());
         List<Request> requestList = requestRepository.findAll((root, query, criteriaBuilder) ->
                 root.get("event").in(events.stream().map(Event::getId).collect(Collectors.toList())));
@@ -42,8 +42,10 @@ public class RequestPrivateServiceImpl implements RequestPrivateService {
     }
 
     @Override
-    @Transactional(isolation = Isolation.READ_COMMITTED)
+    @Transactional
     public ParticipationRequestDto confirmRequest(Long userId, Long eventId, Long reqId) {
+        log.info("REQUEST_PRIVATE_SERVICE: Confirm request with ID = {}, user with ID = {} and event with ID = {}.",
+                reqId, userId, eventId);
         Event event = eventOne(eventId, userId, true);
         Long requestsCount = requestsCount(event);
         if (event.getParticipantLimit() != 0 && event.getParticipantLimit() <= requestsCount) {
@@ -73,8 +75,10 @@ public class RequestPrivateServiceImpl implements RequestPrivateService {
     }
 
     @Override
-    @Transactional(isolation = Isolation.READ_COMMITTED)
+    @Transactional
     public ParticipationRequestDto rejectRequest(Long userId, Long eventId, Long reqId) {
+        log.info("REQUEST_PRIVATE_SERVICE: Reject request with ID = {}, user with ID = {} and event with ID = {}.",
+                reqId, userId, eventId);
         Event event = eventOne(eventId, userId, true);
         Request request = requestOne(reqId, event);
         if (request.getStatus().equals(Status.CONFIRMED)) {
@@ -95,8 +99,10 @@ public class RequestPrivateServiceImpl implements RequestPrivateService {
     }
 
     @Override
-    @Transactional(isolation = Isolation.READ_COMMITTED)
+    @Transactional
     public ParticipationRequestDto addRequest(Long userId, Long eventId) {
+        log.info("REQUEST_PRIVATE_SERVICE: Add request from user with ID = {} for event with ID = {}.",
+                userId, eventId);
         Request request = Request.builder()
                 .created(LocalDateTime.now())
                 .event(Event.builder().id(eventId).build())
@@ -127,8 +133,10 @@ public class RequestPrivateServiceImpl implements RequestPrivateService {
     }
 
     @Override
-    @Transactional(isolation = Isolation.READ_COMMITTED)
+    @Transactional
     public ParticipationRequestDto cancelRequest(Long userId, Long requestId) {
+        log.info("REQUEST_PRIVATE_SERVICE: Cancel request with ID = {} from user with ID = {}.",
+                requestId, userId);
         Request request = requestRepository.findByIdAndRequester(requestId, User.builder().id(userId).build())
                 .orElseThrow(() -> {
                     String message = String.format("Request with ID = %s not found", requestId);

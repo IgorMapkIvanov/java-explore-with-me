@@ -18,7 +18,6 @@ import java.util.Objects;
 @Table(name = "events")
 @Builder
 public class Event {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

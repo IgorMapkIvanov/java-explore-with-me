@@ -86,6 +86,7 @@ public class EventPublicServiceImpl implements EventPublicService {
      */
     @Override
     public EventFullDto getEventById(Long id) {
+        log.info("EVENT_PUBLIC_SERVICE: Get event with ID = {}.", id);
         Event event = eventRepository.findByIdAndState(id, State.PUBLISHED)
                 .orElseThrow(() -> {
                     String message = String.format("Event with ID = %s not found.", id);

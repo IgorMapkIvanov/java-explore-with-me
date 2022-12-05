@@ -39,7 +39,8 @@ public class CompilationAdminController {
 
     @DeleteMapping("/{compId}/events/{eventId}")
     public void deleteEventFromCompilation(@PathVariable @Positive Long compId, @PathVariable @Positive Long eventId) {
-        log.info("COMPILATION_ADMIN_CONTROLLER: Delete event with ID = {} from compilation with ID = {}.", eventId, compId);
+        log.info("COMPILATION_ADMIN_CONTROLLER: Delete event with ID = {} from compilation with ID = {}.",
+                eventId, compId);
         service.deleteEventFromCompilation(compId, eventId);
     }
 

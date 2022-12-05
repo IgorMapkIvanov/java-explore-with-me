@@ -43,8 +43,7 @@ public class EventPrivateServiceImpl implements EventPrivateService {
     @Override
     public List<EventShortDto> getEventsOfUser(Long userId, Pageable pageable) {
         userValidation(userId);
-        log.info("EVENT_PRIVATE_SERVICE: Get user with ID = {} events.",
-                userId);
+        log.info("EVENT_PRIVATE_SERVICE: Get user with ID = {} events.", userId);
         return eventRepository.findAll(
                         (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("initiator"),
                                 User.builder().id(userId).build()), pageable)
@@ -63,6 +62,8 @@ public class EventPrivateServiceImpl implements EventPrivateService {
     @Override
     @Transactional
     public EventFullDto updateEvent(Long userId, UpdateEventDto updateEventDto) {
+        log.info("EVENT_PRIVATE_SERVICE: Update user with ID = {} event with ID = {}.",
+                userId, updateEventDto.getEventId());
         userValidation(userId);
         if (LocalDateTime.now().plusHours(2).isAfter(updateEventDto.getEventDate())) {
             String message = "The date of the event must be later than 2 hours from the current";

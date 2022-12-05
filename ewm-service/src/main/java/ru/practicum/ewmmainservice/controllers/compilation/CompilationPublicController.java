@@ -23,9 +23,11 @@ public class CompilationPublicController {
 
     @GetMapping
     public List<CompilationDto> getCompilations(@RequestParam(name = "pinned", required = false) Boolean pinned,
-                                                @RequestParam(name = "from", defaultValue = "0") @PositiveOrZero int from,
+                                                @RequestParam(name = "from", defaultValue = "0")
+                                                @PositiveOrZero int from,
                                                 @RequestParam(name = "size", defaultValue = "10") @Positive int size) {
-        log.info("COMPILATION_PUBLIC_CONTROLLER: Get compilations with param: pinned = {}, from = {}, size = {}.", pinned, from, size);
+        log.info("COMPILATION_PUBLIC_CONTROLLER: Get compilations with param: pinned = {}, from = {}, size = {}.",
+                pinned, from, size);
         return service.getCompilations(pinned, EwmPageable.of(from, size, Sort.by(Sort.Direction.ASC)));
     }
 

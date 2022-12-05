@@ -15,10 +15,9 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 public class EventFullDto {
-
-    private Long id; //Идентификатор
+    private Long id;
     @NotBlank
-    private String annotation; //Краткое описание
+    private String annotation;
     @NotNull
     private CategoryDto category;
     private Long confirmedRequests;
@@ -51,8 +50,8 @@ public class EventFullDto {
     @AllArgsConstructor
     @Builder
     public static class UserShortDto {
-        private Long id; //Идентификатор
-        private String name; //Имя
+        private Long id;
+        private String name;
     }
 
     @Getter
@@ -62,8 +61,8 @@ public class EventFullDto {
     @AllArgsConstructor
     @Builder
     public static class CategoryDto {
-        private Long id; //Идентификатор категории
-        private String name; //Название категории
+        private Long id;
+        private String name;
     }
 
     @Getter
@@ -73,7 +72,7 @@ public class EventFullDto {
     @AllArgsConstructor
     @Builder
     public static class Location {
-        private Float lat; //Широта
-        private Float lon; //Долгота
+        private Float lat;
+        private Float lon;
     }
 }

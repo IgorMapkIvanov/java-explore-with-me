@@ -54,4 +54,15 @@ public class EwmServiceExceptionHandler {
                 .errors(e.getStackTrace())
                 .timestamp(LocalDateTime.now()).build();
     }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ApiError handleConflictException(ConflictException e) {
+        return ApiError.builder()
+                .message(e.getMessage())
+                .reason(e.getReason())
+                .status(HttpStatus.CONFLICT)
+                .errors(e.getStackTrace())
+                .timestamp(LocalDateTime.now()).build();
+    }
 }

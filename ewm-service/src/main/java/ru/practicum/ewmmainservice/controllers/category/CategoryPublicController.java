@@ -2,12 +2,9 @@ package ru.practicum.ewmmainservice.controllers.category;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewmmainservice.dto.categories.CategoryDto;
-import ru.practicum.ewmmainservice.pageable.EwmPageable;
 import ru.practicum.ewmmainservice.services.categories.CategoryPublicService;
 
 import javax.validation.constraints.Positive;
@@ -23,11 +20,12 @@ public class CategoryPublicController {
     private final CategoryPublicService service;
 
     @GetMapping
-    public List<CategoryDto> getCategories(@RequestParam(name = "from", defaultValue = "0") @PositiveOrZero int from,
-                                           @RequestParam(name = "size", defaultValue = "10") @Positive int size) {
-        Pageable pageable = EwmPageable.of(from, size, Sort.by(Sort.Direction.ASC));
+    public List<CategoryDto> getCategories(@RequestParam(name = "from", required = false, defaultValue = "0")
+                                           @PositiveOrZero Integer from,
+                                           @RequestParam(name = "size", required = false, defaultValue = "10")
+                                           @Positive Integer size) {
         log.info("CATEGORY_PUBLIC_CONTROLLER: Get categories.");
-        return service.getCategories(pageable);
+        return service.getCategories(from, size);
     }
 
     @GetMapping("/{catId}")

@@ -1,8 +1,8 @@
 package ru.practicum.ewmmainservice.dto.requests;
 
-import ru.practicum.ewmmainservice.enums.Status;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
+import ru.practicum.ewmmainservice.enums.Status;
 
 import java.time.LocalDateTime;
 

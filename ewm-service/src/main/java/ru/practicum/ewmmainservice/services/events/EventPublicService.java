@@ -4,6 +4,7 @@ import org.springframework.data.domain.Pageable;
 import ru.practicum.ewmmainservice.dto.events.EventFullDto;
 import ru.practicum.ewmmainservice.dto.events.EventShortDto;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 public interface EventPublicService {
@@ -13,7 +14,8 @@ public interface EventPublicService {
                                   String rangeStart,
                                   String rangeEnd,
                                   Boolean isAvailable,
+                                  HttpServletRequest request,
                                   Pageable pageable);
 
-    EventFullDto getEventById(Long id);
+    EventFullDto getEventById(Long id, HttpServletRequest request);
 }

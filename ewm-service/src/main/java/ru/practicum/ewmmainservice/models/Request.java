@@ -29,8 +29,8 @@ public class Request {
     @ManyToOne
     @JoinColumn(name = "requester_id")
     private User requester;
-    @Enumerated(EnumType.STRING)
     @Column(name = "status")
+    @Enumerated(EnumType.ORDINAL)
     private Status status;
 
     @Override

@@ -3,7 +3,9 @@ package ru.practicum.ewmmainservice.services.requests;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewmmainservice.dto.requests.ParticipationRequestDto;
 import ru.practicum.ewmmainservice.enums.State;
@@ -14,6 +16,7 @@ import ru.practicum.ewmmainservice.mappers.requests.RequestMapper;
 import ru.practicum.ewmmainservice.models.Event;
 import ru.practicum.ewmmainservice.models.Request;
 import ru.practicum.ewmmainservice.models.User;
+import ru.practicum.ewmmainservice.pageable.EwmPageable;
 import ru.practicum.ewmmainservice.repositories.EventRepository;
 import ru.practicum.ewmmainservice.repositories.RequestRepository;
 
@@ -30,68 +33,9 @@ public class RequestPrivateServiceImpl implements RequestPrivateService {
     private final EventRepository eventRepository;
 
     @Override
-    public List<ParticipationRequestDto> getAllRequest(Long userId, Long eventId, Pageable pageable) {
-        log.info("REQUEST_PRIVATE_SERVICE: Get all requests for user with ID = {} and event with ID = {}.",
-                userId, eventId);
-        List<Event> events = eventRepository.findAllByInitiator(User.builder().id(userId).build());
-        List<Request> requestList = requestRepository.findAll((root, query, criteriaBuilder) ->
-                root.get("event").in(events.stream().map(Event::getId).collect(Collectors.toList())));
-        return requestList.stream()
-                .map(RequestMapper::toParticipationRequestDto)
-                .collect(Collectors.toUnmodifiableList());
-    }
-
-    @Override
-    @Transactional
-    public ParticipationRequestDto confirmRequest(Long userId, Long eventId, Long reqId) {
-        log.info("REQUEST_PRIVATE_SERVICE: Confirm request with ID = {}, user with ID = {} and event with ID = {}.",
-                reqId, userId, eventId);
-        Event event = eventOne(eventId, userId, true);
-        Long requestsCount = requestsCount(event);
-        if (event.getParticipantLimit() != 0 && event.getParticipantLimit() <= requestsCount) {
-            String message = String.format("Event participant limit is full: %s", event.getParticipantLimit());
-            String reason = "Event participant limit is full";
-            throw new ValidationException(message, reason);
-        }
-        Request request = requestOne(reqId, event);
-        if (event.getParticipantLimit() == 0 && !event.getRequestModeration()) {
-            return RequestMapper.toParticipationRequestDto(request);
-        }
-        request.setStatus(Status.CONFIRMED);
-        ParticipationRequestDto participationRequestDto = RequestMapper
-                .toParticipationRequestDto(requestRepository.save(request));
-        event.incrementConfirmedRequests();
-        eventRepository.save(event);
-        if (event.getParticipantLimit() != 0 && event.getParticipantLimit() == requestsCount + 1) {
-            List<Request> requestList = requestRepository.findAll(((root, query, criteriaBuilder) ->
-                    criteriaBuilder.and(
-                            criteriaBuilder.equal(root.get("event"), event.getId()),
-                            criteriaBuilder.equal(root.get("status"), Status.PENDING.ordinal())
-                    )));
-            requestList.forEach(el -> el.setStatus(Status.REJECTED));
-            requestRepository.saveAll(requestList);
-        }
-        return participationRequestDto;
-    }
-
-    @Override
-    @Transactional
-    public ParticipationRequestDto rejectRequest(Long userId, Long eventId, Long reqId) {
-        log.info("REQUEST_PRIVATE_SERVICE: Reject request with ID = {}, user with ID = {} and event with ID = {}.",
-                reqId, userId, eventId);
-        Event event = eventOne(eventId, userId, true);
-        Request request = requestOne(reqId, event);
-        if (request.getStatus().equals(Status.CONFIRMED)) {
-            event.decrementConfirmedRequests();
-            eventRepository.save(event);
-        }
-        request.setStatus(Status.REJECTED);
-        return RequestMapper.toParticipationRequestDto(requestRepository.save(request));
-    }
-
-    @Override
-    public List<ParticipationRequestDto> getUserRequests(Long userId, Pageable pageable) {
-        List<Request> requestList = requestRepository.findAllByRequester(User.builder().id(userId).build());
+    public List<ParticipationRequestDto> getUserRequests(Long userId, Integer from, Integer size) {
+        Pageable pageable = EwmPageable.of(from, size, Sort.by(Sort.Direction.ASC, "id"));
+        List<Request> requestList = requestRepository.findAllByRequester(User.builder().id(userId).build(), pageable);
         log.info("REQUEST_PRIVATE_SERVICE: Get request for user with ID = {}.", userId);
         return requestList.stream()
                 .map(RequestMapper::toParticipationRequestDto)
@@ -99,7 +43,7 @@ public class RequestPrivateServiceImpl implements RequestPrivateService {
     }
 
     @Override
-    @Transactional
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public ParticipationRequestDto addRequest(Long userId, Long eventId) {
         log.info("REQUEST_PRIVATE_SERVICE: Add request from user with ID = {} for event with ID = {}.",
                 userId, eventId);
@@ -109,7 +53,7 @@ public class RequestPrivateServiceImpl implements RequestPrivateService {
                 .requester(User.builder().id(userId).build())
                 .status(Status.PENDING)
                 .build();
-        Event event = eventOne(eventId, userId, false);
+        Event event = eventOne(eventId, userId);
         Long requestsCount = requestsCount(event);
         if (event.getParticipantLimit() != 0 && event.getParticipantLimit() <= requestsCount) {
             String message = String.format("Event participant limit is full: %s", event.getParticipantLimit());
@@ -133,7 +77,7 @@ public class RequestPrivateServiceImpl implements RequestPrivateService {
     }
 
     @Override
-    @Transactional
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public ParticipationRequestDto cancelRequest(Long userId, Long requestId) {
         log.info("REQUEST_PRIVATE_SERVICE: Cancel request with ID = {} from user with ID = {}.",
                 requestId, userId);
@@ -160,27 +104,15 @@ public class RequestPrivateServiceImpl implements RequestPrivateService {
         return RequestMapper.toParticipationRequestDto(requestRepository.save(request));
     }
 
-    private Event eventOne(Long eventId, Long userId, Boolean initiator) {
+    private Event eventOne(Long eventId, Long userId) {
         return eventRepository.findOne(((root, query, criteriaBuilder) ->
                 criteriaBuilder.and(
                         criteriaBuilder.equal(root.get("id"), eventId),
-                        (initiator) ? criteriaBuilder.equal(root.get("initiator"), userId) : criteriaBuilder.notEqual(root.get("initiator"), userId),
+                        criteriaBuilder.notEqual(root.get("initiator"), userId),
                         criteriaBuilder.equal(root.get("state"), State.PUBLISHED.ordinal())
                 ))).orElseThrow(() -> {
             String message = String.format("Event with ID = %s not found", eventId);
             String reason = "Event not found";
-            throw new NotFoundException(message, reason);
-        });
-    }
-
-    private Request requestOne(Long reqId, Event event) {
-        return requestRepository.findOne((root, query, criteriaBuilder) ->
-                criteriaBuilder.and(
-                        criteriaBuilder.equal(root.get("id"), reqId),
-                        criteriaBuilder.equal(root.get("event"), event.getId())
-                )).orElseThrow(() -> {
-            String message = String.format("Request with ID = %s not found", reqId);
-            String reason = "Request not found";
             throw new NotFoundException(message, reason);
         });
     }

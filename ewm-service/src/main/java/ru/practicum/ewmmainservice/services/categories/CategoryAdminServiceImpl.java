@@ -8,13 +8,10 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewmmainservice.dto.categories.CategoryDto;
 import ru.practicum.ewmmainservice.dto.categories.NewCategoryDto;
 import ru.practicum.ewmmainservice.exceptions.ConflictException;
-import ru.practicum.ewmmainservice.exceptions.DeleteCategoryException;
 import ru.practicum.ewmmainservice.exceptions.NotFoundException;
 import ru.practicum.ewmmainservice.mappers.categories.CategoryMapper;
 import ru.practicum.ewmmainservice.models.Category;
 import ru.practicum.ewmmainservice.repositories.CategoryRepository;
-import ru.practicum.ewmmainservice.repositories.EventRepository;
-
 
 @Slf4j
 @Service
@@ -22,7 +19,6 @@ import ru.practicum.ewmmainservice.repositories.EventRepository;
 @Transactional
 public class CategoryAdminServiceImpl implements CategoryAdminService {
     private final CategoryRepository categoryRepository;
-    private final EventRepository eventRepository;
 
     /**
      * Update category.
@@ -36,6 +32,13 @@ public class CategoryAdminServiceImpl implements CategoryAdminService {
         Category category = checkCategoryInDbAndReturn(categoryDto.getId());
         if (categoryDto.getName() != null && !categoryDto.getName().isEmpty()) {
             category.setName(categoryDto.getName());
+        }
+        try {
+            categoryRepository.saveAndFlush(category);
+        } catch (DataIntegrityViolationException e) {
+            String message = e.getMessage();
+            String reason = "DataIntegrityViolationException";
+            throw new ConflictException(message, reason);
         }
         return CategoryMapper.toDto(category);
     }
@@ -66,23 +69,8 @@ public class CategoryAdminServiceImpl implements CategoryAdminService {
      */
     @Override
     public void deleteCategory(Long catId) {
-        checkCategoryInDbAndReturn(catId);
-        checkEventWithCategory(catId);
         log.info("CATEGORY_ADMIN_SERVICE: Delete category with ID = {}.", catId);
         categoryRepository.deleteById(catId);
-    }
-
-    /**
-     * Check event with category in database.
-     *
-     * @param catId {@link Long}
-     */
-    private void checkEventWithCategory(Long catId) {
-        if (!eventRepository.findByCategory(catId).isEmpty()) {
-            String message = String.format("Event in db belongs to category with id = '%s'", catId);
-            String reason = "Category is used in the event";
-            throw new DeleteCategoryException(message, reason);
-        }
     }
 
     /**

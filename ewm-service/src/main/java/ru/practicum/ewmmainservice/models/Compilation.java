@@ -13,6 +13,7 @@ import java.util.Set;
 @RequiredArgsConstructor
 @AllArgsConstructor
 @Entity
+@Table(name = "compilations")
 @Builder
 public class Compilation {
     @Id

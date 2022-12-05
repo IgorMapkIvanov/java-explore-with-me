@@ -7,7 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
-public class EwmRuntimeException extends RuntimeException{
+public class EwmRuntimeException extends RuntimeException {
     private String message;
     private String reason;
 }

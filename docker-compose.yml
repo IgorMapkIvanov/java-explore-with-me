@@ -10,46 +10,57 @@ services:
     depends_on:
       - stats-db
     environment:
-      - DB_HOST=localhost
-      - DB_PORT=5432
-      - DB_NAME=EwmStatsDb
       - SPRING_R2DBC_URL=r2dbc:postgresql://stats-db:5432/EwmStatsDb?encoding=utf8
       - SPRING_R2DBC_USERNAME=statsroot
       - SPRING_R2DBC_PASSWORD=statsroot
 
   stats-db:
     image: postgres:14-alpine
+    container_name: stats-db
     restart: always
     ports:
-      - "6542:5432"
+      - "6543:5432"
     environment:
       - POSTGRES_DB=EwmStatsDb
       - POSTGRES_USER=statsroot
       - POSTGRES_PASSWORD=statsroot
+      - POSTGRES_PORT=5433
+    networks:
+      - stats-server
 
   ewm-service:
-    build: ewm-service
-    container_name: ewm-maservice
+    build: ./ewm-service
+    container_name: ewm-main-service
     restart: always
     ports:
       - "8080:8080"
     depends_on:
       - stats-server
-      - stats-db
       - ewm-db
     environment:
       - STATS_SERVER_URL=http://stats-server:9090
       - SPRING_DATASOURCE_URL=jdbc:postgresql://ewm-db:5432/EwmMainDb
       - SPRING_DATASOURCE_USERNAME=ewmroot
       - SPRING_DATASOURCE_PASSWORD=ewmroot
+    networks:
+      - ewm-service
+      - services
 
   ewm-db:
     image: postgres:14-alpine
     container_name: ewm-db
     restart: always
     ports:
-      - "6540:5432"
+      - "6541:5432"
     environment:
       - POSTGRES_DB=EwmMainDb
       - POSTGRES_USER=ewmroot
       - POSTGRES_PASSWORD=ewmroot
+
+networks:
+  ewm-service:
+    driver: bridge
+  stats-server:
+    driver: bridge
+  services:
+    driver: bridge

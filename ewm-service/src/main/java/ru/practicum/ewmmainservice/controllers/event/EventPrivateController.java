@@ -2,8 +2,6 @@ package ru.practicum.ewmmainservice.controllers.event;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewmmainservice.dto.events.EventFullDto;
@@ -11,7 +9,6 @@ import ru.practicum.ewmmainservice.dto.events.EventShortDto;
 import ru.practicum.ewmmainservice.dto.events.NewEventDto;
 import ru.practicum.ewmmainservice.dto.events.UpdateEventDto;
 import ru.practicum.ewmmainservice.dto.requests.ParticipationRequestDto;
-import ru.practicum.ewmmainservice.pageable.EwmPageable;
 import ru.practicum.ewmmainservice.services.events.EventPrivateService;
 
 import javax.validation.Valid;
@@ -30,12 +27,11 @@ public class EventPrivateController {
     @GetMapping
     public List<EventShortDto> getEventsOfUser(@PathVariable @Positive Long userId,
                                                @RequestParam(name = "from", defaultValue = "0", required = false)
-                                               @PositiveOrZero int from,
+                                               @PositiveOrZero Integer from,
                                                @RequestParam(name = "size", defaultValue = "10", required = false)
-                                               @Positive int size) {
-        Pageable pageable = EwmPageable.of(from, size, Sort.by(Sort.Direction.ASC, "id"));
+                                               @Positive Integer size) {
         log.info("EVENT_PRIVATE_CONTROLLER: Get events for user with ID = {}.", userId);
-        return eventPrivateService.getEventsOfUser(userId, pageable);
+        return eventPrivateService.getEventsOfUser(userId, from, size);
     }
 
     @GetMapping("/{eventId}")
@@ -47,12 +43,13 @@ public class EventPrivateController {
     @GetMapping("/{eventId}/requests")
     public List<ParticipationRequestDto> getRequests(@PathVariable @Positive Long userId,
                                                      @PathVariable @Positive Long eventId,
-                                                     @RequestParam(name = "from", defaultValue = "0") @PositiveOrZero int from,
-                                                     @RequestParam(name = "size", defaultValue = "10") @Positive int size) {
-        Pageable pageable = EwmPageable.of(from, size);
+                                                     @RequestParam(name = "from", defaultValue = "0")
+                                                     @PositiveOrZero Integer from,
+                                                     @RequestParam(name = "size", defaultValue = "10")
+                                                     @Positive Integer size) {
         log.info("EVENT_PRIVATE_CONTROLLER: Get requests for user with ID = {} and event with ID = {}.",
                 userId, eventId);
-        return eventPrivateService.getRequests(userId, eventId, pageable);
+        return eventPrivateService.getRequests(userId, eventId, from, size);
     }
 
     @PostMapping

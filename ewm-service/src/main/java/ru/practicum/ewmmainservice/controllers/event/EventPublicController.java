@@ -12,13 +12,10 @@ import ru.practicum.ewmmainservice.enums.EventSort;
 import ru.practicum.ewmmainservice.exceptions.ValidationException;
 import ru.practicum.ewmmainservice.pageable.EwmPageable;
 import ru.practicum.ewmmainservice.services.events.EventPublicService;
-import ru.practicum.ewmmainservice.services.statistics.StatsService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
-import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.List;
 
 @Slf4j
@@ -28,22 +25,17 @@ import java.util.List;
 @RequestMapping("/events")
 public class EventPublicController {
     private final EventPublicService eventPublicService;
-    private final StatsService statsService;
 
     @GetMapping(value = "/{id}")
-    public EventFullDto getEventById(@PathVariable @Positive Long id, HttpServletRequest request)
-            throws URISyntaxException, IOException, InterruptedException {
+    public EventFullDto getEventById(@PathVariable @Positive Long id, HttpServletRequest request) {
         log.info("EVENT_PUBLIC_CONTROLLER: Get event by ID = {}.", id);
-        EventFullDto eventFullDto = eventPublicService.getEventById(id);
-        log.info("EVENT_PUBLIC_CONTROLLER: Post request to stats server");
-        return statsService.getViewStats(request, eventFullDto);
+        return eventPublicService.getEventById(id, request);
     }
 
     @GetMapping
-    public List<EventShortDto> getEvents(@RequestParam(name = "text", required = false, defaultValue = "") String text,
+    public List<EventShortDto> getEvents(@RequestParam(name = "text", required = false) String text,
                                          @RequestParam(name = "categories", required = false) List<Long> categories,
-                                         @RequestParam(name = "paid", required = false,
-                                                 defaultValue = "false") Boolean paid,
+                                         @RequestParam(name = "paid", required = false) Boolean paid,
                                          @RequestParam(name = "rangeStart", required = false,
                                                  defaultValue = "") String rangeStart,
                                          @RequestParam(name = "rangeEnd", required = false,
@@ -54,8 +46,7 @@ public class EventPublicController {
                                                  defaultValue = "ID") String sort,
                                          @RequestParam(name = "from", defaultValue = "0") @PositiveOrZero int from,
                                          @RequestParam(name = "size", defaultValue = "10") @Positive int size,
-                                         HttpServletRequest request)
-            throws URISyntaxException, IOException, InterruptedException {
+                                         HttpServletRequest request) {
         log.info("EVENT_PUBLIC_CONTROLLER: Get events with params: text {}, categories {}, isPaid {}, rangeStart {}," +
                         " rangeEnd {}, isOnlyAvailable {}",
                 text, categories, paid, rangeStart, rangeEnd, onlyAvailable);
@@ -79,8 +70,8 @@ public class EventPublicController {
                 pageable = EwmPageable.of(from, size, Sort.by(Sort.Direction.ASC, "id"));
         }
         List<EventShortDto> eventShortDtoList = eventPublicService
-                .getEvents(text, categories, paid, rangeStart, rangeEnd, onlyAvailable, pageable);
+                .getEvents(text, categories, paid, rangeStart, rangeEnd, onlyAvailable, request, pageable);
         log.info("EVENT_PUBLIC_CONTROLLER: Post request to stats server");
-        return statsService.getViewStats(request, eventShortDtoList);
+        return eventShortDtoList;
     }
 }

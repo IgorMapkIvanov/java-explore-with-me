@@ -3,10 +3,12 @@ package ru.practicum.ewmmainservice.services.categories;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ru.practicum.ewmmainservice.dto.categories.CategoryDto;
 import ru.practicum.ewmmainservice.exceptions.NotFoundException;
 import ru.practicum.ewmmainservice.mappers.categories.CategoryMapper;
+import ru.practicum.ewmmainservice.pageable.EwmPageable;
 import ru.practicum.ewmmainservice.repositories.CategoryRepository;
 
 import java.util.List;
@@ -21,11 +23,13 @@ public class CategoryPublicServiceImpl implements CategoryPublicService {
     /**
      * Get categories.
      *
-     * @param pageable {@link Pageable}
+     * @param from {@link Integer}
+     * @param size {@link Integer}
      * @return {@link List} of {@link CategoryDto}
      */
     @Override
-    public List<CategoryDto> getCategories(Pageable pageable) {
+    public List<CategoryDto> getCategories(Integer from, Integer size) {
+        Pageable pageable = EwmPageable.of(from, size, Sort.by(Sort.Direction.ASC, "id"));
         List<CategoryDto> categoryDtos = categoryRepository.findAll(pageable).stream()
                 .map(CategoryMapper::toDto)
                 .collect(Collectors.toUnmodifiableList());

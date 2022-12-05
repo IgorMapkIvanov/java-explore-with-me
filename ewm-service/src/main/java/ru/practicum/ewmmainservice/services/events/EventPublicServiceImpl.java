@@ -4,7 +4,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import ru.practicum.ewmmainservice.client.EventsClient;
+import ru.practicum.ewmmainservice.client.statistic.Hit;
+import ru.practicum.ewmmainservice.client.statistic.Statistic;
 import ru.practicum.ewmmainservice.dto.events.EventFullDto;
 import ru.practicum.ewmmainservice.dto.events.EventShortDto;
 import ru.practicum.ewmmainservice.enums.State;
@@ -13,9 +17,13 @@ import ru.practicum.ewmmainservice.mappers.events.EventMapper;
 import ru.practicum.ewmmainservice.models.Event;
 import ru.practicum.ewmmainservice.repositories.EventRepository;
 
+import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -23,6 +31,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class EventPublicServiceImpl implements EventPublicService {
     private final EventRepository eventRepository;
+    private final EventsClient eventsClient;
 
 
     /**
@@ -39,10 +48,12 @@ public class EventPublicServiceImpl implements EventPublicService {
      */
     @Override
     public List<EventShortDto> getEvents(String text, List<Long> categories, Boolean paid, String rangeStart,
-                                         String rangeEnd, Boolean isAvailable, Pageable pageable) {
+                                         String rangeEnd, Boolean isAvailable, HttpServletRequest request, Pageable pageable) {
         log.info("EVENT_PUBLIC_SERVICE: Get events with params: text {}, categories {}, isPaid {}, rangeStart {}," +
                         " rangeEnd {}, isOnlyAvailable {}",
                 text, categories, paid, rangeStart, rangeEnd, isAvailable);
+        log.info("EVENT_PUBLIC_SERVICE: Post request to stats server");
+        addStat(request);
         LocalDateTime currentDate = LocalDateTime.now();
         Page<Event> events = eventRepository.findAll((root, query, criteriaBuilder) ->
                         criteriaBuilder.and(
@@ -72,6 +83,7 @@ public class EventPublicServiceImpl implements EventPublicService {
                                                 "%" + text.toLowerCase() + "%")
                                 )),
                 pageable);
+        addViews(events);
         return events.stream()
                 .map(EventMapper::toEventShortDto)
                 .collect(Collectors.toList());
@@ -85,14 +97,58 @@ public class EventPublicServiceImpl implements EventPublicService {
      * @return {@link  EventFullDto}
      */
     @Override
-    public EventFullDto getEventById(Long id) {
+    public EventFullDto getEventById(Long id, HttpServletRequest request) {
         log.info("EVENT_PUBLIC_SERVICE: Get event with ID = {}.", id);
+        log.info("EVENT_PUBLIC_SERVICE: Post request to stats server");
+        addStat(request);
         Event event = eventRepository.findByIdAndState(id, State.PUBLISHED)
                 .orElseThrow(() -> {
                     String message = String.format("Event with ID = %s not found.", id);
                     String reason = "Event not found";
                     throw new NotFoundException(message, reason);
                 });
+        addViews(event, List.of(request.getRequestURI()));
         return EventMapper.toEventFullDto(event);
+    }
+
+    private void addStat(HttpServletRequest request) {
+        Hit hit = new Hit(
+                "ewm-main-service",
+                request.getRequestURI(),
+                request.getRemoteAddr(),
+                LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+        eventsClient.saveStat(hit);
+    }
+
+    private void addViews(Event event, List<String> uris) {
+        ResponseEntity<Statistic[]> responseEntity = eventsClient.getStat(uris);
+        Statistic[] stat = responseEntity.getBody();
+        assert stat != null;
+        if (stat.length < 1) {
+            event.setViews(0);
+        }
+        event.setViews(stat[0].getHits());
+    }
+
+    private void addViews(Page<Event> events) {
+        List<String> uris = new ArrayList<>();
+        for (Event event : events) {
+            uris.add("/events/" + event.getId());
+        }
+        ResponseEntity<Statistic[]> responseEntity = eventsClient.getStat(uris);
+        Statistic[] stat = responseEntity.getBody();
+        assert stat != null;
+        Map<Long, Integer> views = new HashMap<>();
+        for (Statistic statistic : stat) {
+            String[] array = statistic.getUri().split("/");
+            views.put(Long.valueOf(array[array.length - 1]), statistic.getHits());
+        }
+        for (Event event : events) {
+            if (views.get(event.getId()) == null) {
+                event.setViews(0);
+            } else {
+                event.setViews(views.get(event.getId()));
+            }
+        }
     }
 }

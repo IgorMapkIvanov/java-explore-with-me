@@ -49,11 +49,13 @@ public class Event {
     @Column(name = "request_moderation")
     @Builder.Default
     private Boolean requestModeration = true;
+    @Enumerated(EnumType.ORDINAL)
     @Column(name = "state")
-    @Enumerated
     private State state;
     @Column(name = "title")
     private String title;
+    @Transient
+    private Integer views;
 
     public void incrementConfirmedRequests() {
         confirmedRequests++;

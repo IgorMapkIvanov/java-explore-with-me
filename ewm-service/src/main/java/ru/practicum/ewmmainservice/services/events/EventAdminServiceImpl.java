@@ -3,7 +3,7 @@ package ru.practicum.ewmmainservice.services.events;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewmmainservice.dto.events.EventBaseDto;
@@ -16,6 +16,7 @@ import ru.practicum.ewmmainservice.exceptions.ValidationException;
 import ru.practicum.ewmmainservice.mappers.events.EventMapper;
 import ru.practicum.ewmmainservice.models.Category;
 import ru.practicum.ewmmainservice.models.Event;
+import ru.practicum.ewmmainservice.pageable.EwmPageable;
 import ru.practicum.ewmmainservice.repositories.EventRepository;
 
 import java.time.LocalDateTime;
@@ -38,21 +39,24 @@ public class EventAdminServiceImpl implements EventAdminService {
      * @param categories {@link List} of {@link Long}
      * @param rangeStart {@link String}
      * @param rangeEnd   {@link String}
-     * @param pageable   {@link Pageable}
+     * @param from       {@link Integer}
+     * @param size       {@link Integer}
      * @return {@link List} of {@link EventFullDto}
      */
     @Override
     public List<EventFullDto> getEvents(List<Long> users, List<String> states, List<Long> categories,
-                                        String rangeStart, String rangeEnd, Pageable pageable) {
-        log.info("EVENT_ADMIN_SERVICE: Get events for admin with userIds {}, eventStatuses {}, categoryIds {}, rangeStart {}, rangeEnd {}",
+                                        String rangeStart, String rangeEnd, Integer from, Integer size) {
+        log.info("EVENT_ADMIN_SERVICE: Get events for admin with userIds {}, " +
+                        "eventStatuses {}, categoryIds {}, rangeStart {}, rangeEnd {}",
                 users, states, categories, rangeStart, rangeEnd);
 
         LocalDateTime currentDate = LocalDateTime.now();
         Page<Event> events = eventRepository.findAll((root, query, criteriaBuilder) ->
                         criteriaBuilder.and(
                                 (users != null) ? root.get("initiator").in(users) : root.isNotNull(),
-                                (states != null) ? root.get("state").in(states.stream().map(el ->
-                                        State.valueOf(el).ordinal()).collect(Collectors.toList())) : root.isNotNull(),
+                                (states != null) ? root.get("state").in(states.stream()
+                                        .map(el -> State.valueOf(el).ordinal())
+                                        .collect(Collectors.toList())) : root.isNotNull(),
                                 (categories != null) ? root.get("categories").in(categories) : root.isNotNull(),
                                 (!rangeStart.isEmpty() && !rangeEnd.isEmpty()) ?
                                         criteriaBuilder.and(
@@ -64,7 +68,7 @@ public class EventAdminServiceImpl implements EventAdminService {
                                                                 DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
                                         ) : criteriaBuilder.lessThan(root.get("eventDate"), currentDate)
                         ),
-                pageable);
+                EwmPageable.of(from, size, Sort.by(Sort.Direction.ASC, "id")));
         return events.stream()
                 .map(EventMapper::toEventFullDto)
                 .collect(Collectors.toList());
@@ -124,7 +128,7 @@ public class EventAdminServiceImpl implements EventAdminService {
                 });
         event.setState(State.PUBLISHED);
         event.setPublishedOn(LocalDateTime.now());
-        return EventMapper.toEventFullDto(event);
+        return EventMapper.toEventFullDto(eventRepository.save(event));
     }
 
     /**

@@ -3,11 +3,13 @@ package ru.practicum.ewmmainservice.services.compilations;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ru.practicum.ewmmainservice.dto.compilations.CompilationDto;
 import ru.practicum.ewmmainservice.exceptions.NotFoundException;
 import ru.practicum.ewmmainservice.mappers.compilations.CompilationMapper;
 import ru.practicum.ewmmainservice.models.Compilation;
+import ru.practicum.ewmmainservice.pageable.EwmPageable;
 import ru.practicum.ewmmainservice.repositories.CompilationRepository;
 
 import java.util.List;
@@ -22,12 +24,14 @@ public class CompilationPublicServiceImpl implements CompilationPublicService {
     /**
      * Get compilations.
      *
-     * @param pinned   {@link Boolean}
-     * @param pageable {@link Pageable}
+     * @param pinned {@link Boolean}
+     * @param from   {@link Integer}
+     * @param size   {@link Integer}
      * @return List<CompilationDto>
      */
     @Override
-    public List<CompilationDto> getCompilations(Boolean pinned, Pageable pageable) {
+    public List<CompilationDto> getCompilations(Boolean pinned, Integer from, Integer size) {
+        Pageable pageable = EwmPageable.of(from, size, Sort.by(Sort.Direction.ASC, "id"));
         if (pinned == null) {
             log.info("COMPILATION_PUBLIC_SERVICE: Get compilations without pinned.");
             return compilationRepository.findAll(pageable).stream()

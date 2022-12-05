@@ -3,6 +3,7 @@ package ru.practicum.ewmmainservice.services.events;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewmmainservice.dto.events.*;
@@ -17,6 +18,7 @@ import ru.practicum.ewmmainservice.models.Category;
 import ru.practicum.ewmmainservice.models.Event;
 import ru.practicum.ewmmainservice.models.Request;
 import ru.practicum.ewmmainservice.models.User;
+import ru.practicum.ewmmainservice.pageable.EwmPageable;
 import ru.practicum.ewmmainservice.repositories.EventRepository;
 import ru.practicum.ewmmainservice.repositories.RequestRepository;
 import ru.practicum.ewmmainservice.repositories.UserRepository;
@@ -41,7 +43,8 @@ public class EventPrivateServiceImpl implements EventPrivateService {
      * @return {@link List} of {@link EventShortDto}
      */
     @Override
-    public List<EventShortDto> getEventsOfUser(Long userId, Pageable pageable) {
+    public List<EventShortDto> getEventsOfUser(Long userId, Integer from, Integer size) {
+        Pageable pageable = EwmPageable.of(from, size, Sort.by(Sort.Direction.ASC, "id"));
         userValidation(userId);
         log.info("EVENT_PRIVATE_SERVICE: Get user with ID = {} events.", userId);
         return eventRepository.findAll(
@@ -168,7 +171,7 @@ public class EventPrivateServiceImpl implements EventPrivateService {
      * @return {@link List} of {@link ParticipationRequestDto}
      */
     @Override
-    public List<ParticipationRequestDto> getRequests(Long userId, Long eventId, Pageable pageable) {
+    public List<ParticipationRequestDto> getRequests(Long userId, Long eventId, Integer from, Integer size) {
         userValidation(userId);
         List<Event> events = eventRepository.findAllByInitiator(User.builder().id(userId).build());
         List<Request> requestList = requestRepository.findAll((root, query, criteriaBuilder) ->

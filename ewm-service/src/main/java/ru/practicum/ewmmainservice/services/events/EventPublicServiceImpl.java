@@ -7,8 +7,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import ru.practicum.ewmmainservice.client.EventsClient;
-import ru.practicum.ewmmainservice.client.statistic.Hit;
-import ru.practicum.ewmmainservice.client.statistic.Statistic;
+import ru.practicum.ewmmainservice.client.statistic.EndpointHit;
+import ru.practicum.ewmmainservice.client.statistic.ViewHits;
 import ru.practicum.ewmmainservice.dto.events.EventFullDto;
 import ru.practicum.ewmmainservice.dto.events.EventShortDto;
 import ru.practicum.ewmmainservice.enums.State;
@@ -112,17 +112,17 @@ public class EventPublicServiceImpl implements EventPublicService {
     }
 
     private void addStat(HttpServletRequest request) {
-        Hit hit = new Hit(
+        EndpointHit endpointHit = new EndpointHit(
                 "ewm-main-service",
                 request.getRequestURI(),
                 request.getRemoteAddr(),
                 LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
-        eventsClient.saveStat(hit);
+        eventsClient.saveStat(endpointHit);
     }
 
     private void addViews(Event event, List<String> uris) {
-        ResponseEntity<Statistic[]> responseEntity = eventsClient.getStat(uris);
-        Statistic[] stat = responseEntity.getBody();
+        ResponseEntity<ViewHits[]> responseEntity = eventsClient.getStat(uris);
+        ViewHits[] stat = responseEntity.getBody();
         assert stat != null;
         if (stat.length < 1) {
             event.setViews(0);
@@ -135,13 +135,13 @@ public class EventPublicServiceImpl implements EventPublicService {
         for (Event event : events) {
             uris.add("/events/" + event.getId());
         }
-        ResponseEntity<Statistic[]> responseEntity = eventsClient.getStat(uris);
-        Statistic[] stat = responseEntity.getBody();
+        ResponseEntity<ViewHits[]> responseEntity = eventsClient.getStat(uris);
+        ViewHits[] stat = responseEntity.getBody();
         assert stat != null;
         Map<Long, Integer> views = new HashMap<>();
-        for (Statistic statistic : stat) {
-            String[] array = statistic.getUri().split("/");
-            views.put(Long.valueOf(array[array.length - 1]), statistic.getHits());
+        for (ViewHits viewHits : stat) {
+            String[] array = viewHits.getUri().split("/");
+            views.put(Long.valueOf(array[array.length - 1]), viewHits.getHits());
         }
         for (Event event : events) {
             if (views.get(event.getId()) == null) {

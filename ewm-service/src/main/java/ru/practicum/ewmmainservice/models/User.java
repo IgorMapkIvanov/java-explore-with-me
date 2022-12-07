@@ -2,6 +2,7 @@ package ru.practicum.ewmmainservice.models;
 
 import lombok.*;
 import org.hibernate.Hibernate;
+import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
 import java.util.Objects;
@@ -19,8 +20,10 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(name = "name", nullable = false)
+    @Length(max = 50)
     private String name;
     @Column(name = "email", unique = true, nullable = false)
+    @Length(max = 150)
     private String email;
 
     @Override

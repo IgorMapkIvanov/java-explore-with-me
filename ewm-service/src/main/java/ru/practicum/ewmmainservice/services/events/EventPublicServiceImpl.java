@@ -2,6 +2,7 @@ package ru.practicum.ewmmainservice.services.events;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -34,6 +35,8 @@ import static ru.practicum.ewmmainservice.Utils.Constants.DATE_TIME_FORMAT;
 public class EventPublicServiceImpl implements EventPublicService {
     private final EventRepository eventRepository;
     private final EventsClient eventsClient;
+    @Value(value = "${app.name}")
+    private String app;
 
 
     /**
@@ -53,9 +56,8 @@ public class EventPublicServiceImpl implements EventPublicService {
                                          String rangeEnd, Boolean isAvailable, HttpServletRequest request,
                                          Pageable pageable) {
         log.info("EVENT_PUBLIC_SERVICE: Get events with params: text {}, categories {}, isPaid {}, rangeStart {}," +
-                        " rangeEnd {}, isOnlyAvailable {}",
+                        " rangeEnd {}, isOnlyAvailable {}. -> Post request to stats server",
                 text, categories, paid, rangeStart, rangeEnd, isAvailable);
-        log.info("EVENT_PUBLIC_SERVICE: Post request to stats server");
         addStat(request);
         LocalDateTime currentDate = LocalDateTime.now();
         Page<Event> events = eventRepository.findAll((root, query, criteriaBuilder) ->
@@ -101,8 +103,7 @@ public class EventPublicServiceImpl implements EventPublicService {
      */
     @Override
     public EventFullDto getEventById(Long id, HttpServletRequest request) {
-        log.info("EVENT_PUBLIC_SERVICE: Get event with ID = {}.", id);
-        log.info("EVENT_PUBLIC_SERVICE: Post request to stats server");
+        log.info("EVENT_PUBLIC_SERVICE: Get event with ID = {}. -> Post request to stats server", id);
         addStat(request);
         Event event = eventRepository.findByIdAndState(id, State.PUBLISHED)
                 .orElseThrow(() -> {
@@ -116,7 +117,7 @@ public class EventPublicServiceImpl implements EventPublicService {
 
     private void addStat(HttpServletRequest request) {
         EndpointHit endpointHit = new EndpointHit(
-                "ewm-main-service",
+                app,
                 request.getRequestURI(),
                 request.getRemoteAddr(),
                 LocalDateTime.now().format(DateTimeFormatter.ofPattern(DATE_TIME_FORMAT)));

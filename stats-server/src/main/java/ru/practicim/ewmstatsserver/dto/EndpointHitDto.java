@@ -7,6 +7,8 @@ import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
+import static Utils.Constants.DATE_TIME_FORMAT;
+
 @Getter
 @Setter
 @ToString
@@ -21,6 +23,6 @@ public class EndpointHitDto implements Serializable {
     private String uri;
     @NotBlank
     private String ip;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_TIME_FORMAT)
     private LocalDateTime timestamp;
 }

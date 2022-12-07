@@ -14,6 +14,8 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+import static Utils.Constants.DATE_TIME_FORMAT;
+
 @Service
 @AllArgsConstructor
 @Transactional(readOnly = true)
@@ -31,8 +33,8 @@ public class StatsServiceImpl implements StatsService {
     public List<ViewStatsDto> getViewStats(String start, String end, List<String> uris, Boolean unique) {
         start = URLDecoder.decode(start, StandardCharsets.UTF_8);
         end = URLDecoder.decode(end, StandardCharsets.UTF_8);
-        LocalDateTime rangeStart = LocalDateTime.parse(start, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-        LocalDateTime rangeEnd = LocalDateTime.parse(end, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        LocalDateTime rangeStart = LocalDateTime.parse(start, DateTimeFormatter.ofPattern(DATE_TIME_FORMAT));
+        LocalDateTime rangeEnd = LocalDateTime.parse(end, DateTimeFormatter.ofPattern(DATE_TIME_FORMAT));
         if (unique) {
             return statsRepository.countTotalIpDistinct(rangeEnd, rangeEnd, uris);
         } else {

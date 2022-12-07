@@ -24,6 +24,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static ru.practicum.ewmmainservice.Utils.Constants.DATE_TIME_FORMAT;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -62,10 +64,10 @@ public class EventAdminServiceImpl implements EventAdminService {
                                         criteriaBuilder.and(
                                                 criteriaBuilder.greaterThan(root.get("eventDate"),
                                                         LocalDateTime.parse(rangeStart,
-                                                                DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))),
+                                                                DateTimeFormatter.ofPattern(DATE_TIME_FORMAT))),
                                                 criteriaBuilder.lessThan(root.get("eventDate"),
                                                         LocalDateTime.parse(rangeEnd,
-                                                                DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
+                                                                DateTimeFormatter.ofPattern(DATE_TIME_FORMAT)))
                                         ) : criteriaBuilder.lessThan(root.get("eventDate"), currentDate)
                         ),
                 EwmPageable.of(from, size, Sort.by(Sort.Direction.ASC, "id")));

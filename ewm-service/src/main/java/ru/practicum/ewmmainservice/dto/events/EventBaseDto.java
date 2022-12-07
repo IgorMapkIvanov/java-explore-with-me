@@ -9,6 +9,8 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 
+import static ru.practicum.ewmmainservice.Utils.Constants.DATE_TIME_FORMAT;
+
 @Getter
 @Setter
 @ToString
@@ -27,7 +29,7 @@ public abstract class EventBaseDto {
     @NotBlank
     protected String description;
     @NotNull
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_TIME_FORMAT)
     protected LocalDateTime eventDate;
     @Builder.Default
     protected Boolean paid = false;

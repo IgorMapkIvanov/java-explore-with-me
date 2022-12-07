@@ -26,6 +26,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static ru.practicum.ewmmainservice.Utils.Constants.DATE_TIME_FORMAT;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -48,7 +50,8 @@ public class EventPublicServiceImpl implements EventPublicService {
      */
     @Override
     public List<EventShortDto> getEvents(String text, List<Long> categories, Boolean paid, String rangeStart,
-                                         String rangeEnd, Boolean isAvailable, HttpServletRequest request, Pageable pageable) {
+                                         String rangeEnd, Boolean isAvailable, HttpServletRequest request,
+                                         Pageable pageable) {
         log.info("EVENT_PUBLIC_SERVICE: Get events with params: text {}, categories {}, isPaid {}, rangeStart {}," +
                         " rangeEnd {}, isOnlyAvailable {}",
                 text, categories, paid, rangeStart, rangeEnd, isAvailable);
@@ -64,10 +67,10 @@ public class EventPublicServiceImpl implements EventPublicService {
                                         criteriaBuilder.and(
                                                 criteriaBuilder.greaterThan(root.get("eventDate"),
                                                         LocalDateTime.parse(rangeStart,
-                                                                DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))),
+                                                                DateTimeFormatter.ofPattern(DATE_TIME_FORMAT))),
                                                 criteriaBuilder.lessThan(root.get("eventDate"),
                                                         LocalDateTime.parse(rangeEnd,
-                                                                DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
+                                                                DateTimeFormatter.ofPattern(DATE_TIME_FORMAT)))
                                         ) : criteriaBuilder.lessThan(root.get("eventDate"), currentDate),
                                 (isAvailable) ? criteriaBuilder.or(
                                         criteriaBuilder.equal(root.get("participantLimit"), 0),
@@ -116,7 +119,7 @@ public class EventPublicServiceImpl implements EventPublicService {
                 "ewm-main-service",
                 request.getRequestURI(),
                 request.getRemoteAddr(),
-                LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+                LocalDateTime.now().format(DateTimeFormatter.ofPattern(DATE_TIME_FORMAT)));
         eventsClient.saveStat(endpointHit);
     }
 

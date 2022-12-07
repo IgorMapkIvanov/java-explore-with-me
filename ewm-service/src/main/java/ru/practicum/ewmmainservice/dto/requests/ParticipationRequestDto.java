@@ -6,6 +6,8 @@ import ru.practicum.ewmmainservice.enums.Status;
 
 import java.time.LocalDateTime;
 
+import static ru.practicum.ewmmainservice.Utils.Constants.DATE_TIME_FORMAT;
+
 @Getter
 @Setter
 @ToString
@@ -17,7 +19,7 @@ public class ParticipationRequestDto {
     private Long id;
     private Long event;
     private Long requester;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_TIME_FORMAT)
     private LocalDateTime created;
     private Status status;
 }

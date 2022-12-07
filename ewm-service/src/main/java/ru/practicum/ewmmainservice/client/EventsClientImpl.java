@@ -13,6 +13,8 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+import static ru.practicum.ewmmainservice.Utils.Constants.DATE_TIME_FORMAT;
+
 @Service
 public class EventsClientImpl implements EventsClient {
 
@@ -40,8 +42,8 @@ public class EventsClientImpl implements EventsClient {
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setAccept(List.of(MediaType.APPLICATION_JSON));
         HttpEntity<Object> requestEntity = new HttpEntity<>(null, headers);
-        String start = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-        String end = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        String start = LocalDateTime.now().format(DateTimeFormatter.ofPattern(DATE_TIME_FORMAT));
+        String end = LocalDateTime.now().format(DateTimeFormatter.ofPattern(DATE_TIME_FORMAT));
         start = URLEncoder.encode(start, StandardCharsets.UTF_8);
         end = URLEncoder.encode(end, StandardCharsets.UTF_8);
         StringBuilder urisBuilder = new StringBuilder();

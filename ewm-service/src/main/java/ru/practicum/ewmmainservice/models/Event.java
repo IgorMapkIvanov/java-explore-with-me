@@ -2,6 +2,7 @@ package ru.practicum.ewmmainservice.models;
 
 import lombok.*;
 import org.hibernate.Hibernate;
+import org.hibernate.validator.constraints.Length;
 import ru.practicum.ewmmainservice.dto.locations.Location;
 import ru.practicum.ewmmainservice.enums.State;
 
@@ -22,6 +23,7 @@ public class Event {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(name = "annotation", length = 2000)
+    @Length(max = 2000)
     private String annotation;
     @ManyToOne()
     @JoinColumn(name = "categories_id")
@@ -31,6 +33,7 @@ public class Event {
     @Column(name = "created_on")
     private LocalDateTime createdOn;
     @Column(name = "description", length = 7000)
+    @Length(max = 7000)
     private String description;
     @Column(name = "event_date")
     private LocalDateTime eventDate;
@@ -53,6 +56,7 @@ public class Event {
     @Column(name = "state")
     private State state;
     @Column(name = "title")
+    @Length(max = 100)
     private String title;
     @Transient
     private Integer views;

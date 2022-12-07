@@ -2,6 +2,7 @@ package ru.practicum.ewmmainservice.models;
 
 import lombok.*;
 import org.hibernate.Hibernate;
+import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
 import java.util.Objects;
@@ -22,7 +23,10 @@ public class Compilation {
     @OneToMany(fetch = FetchType.EAGER)
     @ToString.Exclude
     private Set<Event> events;
+    @Column(name = "pinned")
     private Boolean pinned;
+    @Column(name = "title")
+    @Length(max = 255)
     private String title;
 
     @Override

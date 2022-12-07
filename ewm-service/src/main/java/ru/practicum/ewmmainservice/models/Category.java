@@ -2,6 +2,7 @@ package ru.practicum.ewmmainservice.models;
 
 import lombok.*;
 import org.hibernate.Hibernate;
+import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
 import java.util.Objects;
@@ -19,6 +20,7 @@ public class Category {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(name = "name", unique = true, nullable = false)
+    @Length(max = 50)
     private String name;
 
     @Override

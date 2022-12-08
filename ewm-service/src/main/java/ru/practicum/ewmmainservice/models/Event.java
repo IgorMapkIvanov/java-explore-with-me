@@ -3,7 +3,7 @@ package ru.practicum.ewmmainservice.models;
 import lombok.*;
 import org.hibernate.Hibernate;
 import org.hibernate.validator.constraints.Length;
-import ru.practicum.ewmmainservice.dto.locations.Location;
+import ru.practicum.ewmmainservice.dto.location.Location;
 import ru.practicum.ewmmainservice.enums.State;
 
 import javax.persistence.*;

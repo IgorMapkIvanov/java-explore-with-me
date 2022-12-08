@@ -3,9 +3,9 @@ package ru.practicum.ewmmainservice.controllers.event;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.ewmmainservice.dto.events.EventFullDto;
-import ru.practicum.ewmmainservice.dto.events.NewEventDto;
-import ru.practicum.ewmmainservice.services.events.EventAdminService;
+import ru.practicum.ewmmainservice.dto.event.EventFullDto;
+import ru.practicum.ewmmainservice.dto.event.NewEventDto;
+import ru.practicum.ewmmainservice.services.event.EventAdminService;
 
 import java.util.List;
 

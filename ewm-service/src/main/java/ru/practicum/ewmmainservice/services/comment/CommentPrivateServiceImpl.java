@@ -32,8 +32,8 @@ public class CommentPrivateServiceImpl implements CommentPrivateService {
     @Override
     @Transactional
     public CommentDto addComment(Long userId, Long eventId, NewCommentDto newCommentDto) {
-        log.info("COMMENT_PRIVATE_SERVICE: Add comment: user ID = {}, event ID = {}, comment text = {}"
-                , userId, eventId, newCommentDto);
+        log.info("COMMENT_PRIVATE_SERVICE: Add comment: user ID = {}, event ID = {}, comment text = {}",
+                userId, eventId, newCommentDto);
         User author = userRepository.findById(userId)
                 .orElseThrow(() -> {
                     String message = String.format("User with ID = %s not found.", userId);
@@ -58,8 +58,8 @@ public class CommentPrivateServiceImpl implements CommentPrivateService {
     @Override
     @Transactional
     public CommentDto editComment(Long userId, Long commentId, NewCommentDto newCommentDto) {
-        log.info("COMMENT_PRIVATE_CONTROLLER: Edit comment with ID = {}: user ID = {}, edit comment = {}"
-                , commentId, userId, newCommentDto);
+        log.info("COMMENT_PRIVATE_CONTROLLER: Edit comment with ID = {}: user ID = {}, edit comment = {}",
+                commentId, userId, newCommentDto);
         Comment comment = commentRepository.findByIdAndAuthorId(commentId, userId)
                 .orElseThrow(() -> {
                     String message = String.format("Comment with ID = %s not found.", commentId);
@@ -75,15 +75,15 @@ public class CommentPrivateServiceImpl implements CommentPrivateService {
     @Override
     @Transactional
     public void deleteComment(Long userId, Long commentId) {
-        log.info("COMMENT_PRIVATE_SERVICE: Delete comment: user ID = {}, comment ID = {}"
-                , userId, commentId);
+        log.info("COMMENT_PRIVATE_SERVICE: Delete comment: user ID = {}, comment ID = {}",
+                userId, commentId);
         commentRepository.deleteByAuthorAndId(User.builder().id(userId).build(), commentId);
     }
 
     @Override
     public List<CommentDto> getComments(Long userId, Integer from, Integer size) {
-        log.info("COMMENT_PRIVATE_SERVICE: Get comments with param: user ID = {}, from = {}, size = {}"
-                , userId, from, size);
+        log.info("COMMENT_PRIVATE_SERVICE: Get comments with param: user ID = {}, from = {}, size = {}",
+                userId, from, size);
         List<Comment> commentList = commentRepository.findByAuthorId(userId,
                 EwmPageable.of(from, size, Sort.by(Sort.Direction.DESC, "dateCreate")));
         return commentList.stream().map(CommentMapper::toCommentsDto).collect(Collectors.toUnmodifiableList());

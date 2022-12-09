@@ -8,8 +8,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewmmainservice.dto.event.*;
 import ru.practicum.ewmmainservice.dto.request.ParticipationRequestDto;
-import ru.practicum.ewmmainservice.enums.State;
-import ru.practicum.ewmmainservice.enums.Status;
+import ru.practicum.ewmmainservice.enums.EventState;
+import ru.practicum.ewmmainservice.enums.EventStatus;
 import ru.practicum.ewmmainservice.exceptions.NotFoundException;
 import ru.practicum.ewmmainservice.exceptions.ValidationException;
 import ru.practicum.ewmmainservice.mappers.event.EventMapper;
@@ -84,13 +84,13 @@ public class EventPrivateServiceImpl implements EventPrivateService {
             String reason = "User not initiator of event";
             throw new ValidationException(message, reason);
         }
-        if (event.getState().equals(State.PUBLISHED)) {
+        if (event.getState().equals(EventState.PUBLISHED)) {
             String message = String.format("Event with ID = %s not PUBLISH.", event.getId());
             String reason = "Event not PUBLISH.";
             throw new ValidationException(message, reason);
         }
-        if (event.getState().equals(State.CANCELED)) {
-            event.setState(State.PENDING);
+        if (event.getState().equals(EventState.CANCELED)) {
+            event.setState(EventState.PENDING);
         }
         copyChange(event, updateEventDto);
         log.info("EVENT_PRIVATE_SERVICE: Update event with ID = {} events.",
@@ -157,7 +157,7 @@ public class EventPrivateServiceImpl implements EventPrivateService {
                     String reason = "Event not found";
                     throw new NotFoundException(message, reason);
                 });
-        event.setState(State.CANCELED);
+        event.setState(EventState.CANCELED);
         log.info("EVENT_PRIVATE_SERVICE: Cancel of event with ID = {} by user with ID = {} events.",
                 eventId, userId);
         return EventMapper.toEventFullDto(event);
@@ -204,7 +204,7 @@ public class EventPrivateServiceImpl implements EventPrivateService {
         if (event.getParticipantLimit() == 0 && !event.getRequestModeration()) {
             return RequestMapper.toParticipationRequestDto(request);
         }
-        request.setStatus(Status.CONFIRMED);
+        request.setStatus(EventStatus.CONFIRMED);
         ParticipationRequestDto participationRequestDto = RequestMapper.toParticipationRequestDto(request);
         event.incrementConfirmedRequests();
         eventRepository.save(event);
@@ -212,9 +212,9 @@ public class EventPrivateServiceImpl implements EventPrivateService {
             List<Request> requestList = requestRepository.findAll(((root, query, criteriaBuilder) ->
                     criteriaBuilder.and(
                             criteriaBuilder.equal(root.get("event"), event.getId()),
-                            criteriaBuilder.equal(root.get("status"), Status.PENDING.ordinal())
+                            criteriaBuilder.equal(root.get("eventStatus"), EventStatus.PENDING.ordinal())
                     )));
-            requestList.forEach(el -> el.setStatus(Status.REJECTED));
+            requestList.forEach(el -> el.setStatus(EventStatus.REJECTED));
         }
         log.info("EVENT_PRIVATE_SERVICE: Confirm request with ID = {} of event with ID = {} by user with ID = {} events.",
                 reqId, eventId, userId);
@@ -235,11 +235,11 @@ public class EventPrivateServiceImpl implements EventPrivateService {
         userValidation(userId);
         Event event = eventOne(eventId, userId);
         Request request = requestOne(reqId, event);
-        if (request.getStatus().equals(Status.CONFIRMED)) {
+        if (request.getStatus().equals(EventStatus.CONFIRMED)) {
             event.decrementConfirmedRequests();
             eventRepository.save(event);
         }
-        request.setStatus(Status.REJECTED);
+        request.setStatus(EventStatus.REJECTED);
         log.info("EVENT_PRIVATE_SERVICE: Reject request with ID = {} of event with ID = {} by user with ID = {} events.",
                 reqId, eventId, userId);
         return RequestMapper.toParticipationRequestDto(request);
@@ -259,7 +259,7 @@ public class EventPrivateServiceImpl implements EventPrivateService {
                         criteriaBuilder.equal(root.get("id"), eventId),
                         criteriaBuilder.equal(root.get("initiator"),
                                 userId),
-                        criteriaBuilder.equal(root.get("state"), State.PUBLISHED.ordinal())
+                        criteriaBuilder.equal(root.get("state"), EventState.PUBLISHED.ordinal())
                 ))).orElseThrow(() -> {
             String message = String.format("Event with ID = %s not found.", eventId);
             String reason = "Event not found";
@@ -283,7 +283,7 @@ public class EventPrivateServiceImpl implements EventPrivateService {
         return requestRepository.count((root, query, criteriaBuilder) ->
                 criteriaBuilder.and(
                         criteriaBuilder.equal(root.get("event"), event.getId()),
-                        criteriaBuilder.equal(root.get("status"), Status.CONFIRMED.ordinal())
+                        criteriaBuilder.equal(root.get("status"), EventStatus.CONFIRMED.ordinal())
                 ));
     }
 

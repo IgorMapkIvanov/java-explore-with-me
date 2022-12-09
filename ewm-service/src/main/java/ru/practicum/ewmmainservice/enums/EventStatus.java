@@ -1,6 +1,6 @@
 package ru.practicum.ewmmainservice.enums;
 
-public enum Status {
+public enum EventStatus {
     PENDING,
     CONFIRMED,
     REJECTED,

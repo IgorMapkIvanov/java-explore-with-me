@@ -12,7 +12,7 @@ import ru.practicum.ewmmainservice.client.statistic.EndpointHit;
 import ru.practicum.ewmmainservice.client.statistic.ViewHits;
 import ru.practicum.ewmmainservice.dto.event.EventFullDto;
 import ru.practicum.ewmmainservice.dto.event.EventShortDto;
-import ru.practicum.ewmmainservice.enums.State;
+import ru.practicum.ewmmainservice.enums.EventState;
 import ru.practicum.ewmmainservice.exceptions.NotFoundException;
 import ru.practicum.ewmmainservice.mappers.event.EventMapper;
 import ru.practicum.ewmmainservice.models.Event;
@@ -62,7 +62,7 @@ public class EventPublicServiceImpl implements EventPublicService {
         LocalDateTime currentDate = LocalDateTime.now();
         Page<Event> events = eventRepository.findAll((root, query, criteriaBuilder) ->
                         criteriaBuilder.and(
-                                criteriaBuilder.equal(root.get("state"), State.PUBLISHED.ordinal()),
+                                criteriaBuilder.equal(root.get("state"), EventState.PUBLISHED.ordinal()),
                                 root.get("categories").in(categories),
                                 criteriaBuilder.equal(root.get("paid"), paid),
                                 (!rangeStart.isEmpty() && !rangeEnd.isEmpty()) ?
@@ -105,7 +105,7 @@ public class EventPublicServiceImpl implements EventPublicService {
     public EventFullDto getEventById(Long id, HttpServletRequest request) {
         log.info("EVENT_PUBLIC_SERVICE: Get event with ID = {}. -> Post request to stats server", id);
         addStat(request);
-        Event event = eventRepository.findByIdAndState(id, State.PUBLISHED)
+        Event event = eventRepository.findByIdAndState(id, EventState.PUBLISHED)
                 .orElseThrow(() -> {
                     String message = String.format("Event with ID = %s not found.", id);
                     String reason = "Event not found";

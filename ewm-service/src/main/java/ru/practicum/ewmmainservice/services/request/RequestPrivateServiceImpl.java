@@ -8,8 +8,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewmmainservice.dto.request.ParticipationRequestDto;
-import ru.practicum.ewmmainservice.enums.State;
-import ru.practicum.ewmmainservice.enums.Status;
+import ru.practicum.ewmmainservice.enums.EventState;
+import ru.practicum.ewmmainservice.enums.EventStatus;
 import ru.practicum.ewmmainservice.exceptions.NotFoundException;
 import ru.practicum.ewmmainservice.exceptions.ValidationException;
 import ru.practicum.ewmmainservice.mappers.request.RequestMapper;
@@ -51,7 +51,7 @@ public class RequestPrivateServiceImpl implements RequestPrivateService {
                 .created(LocalDateTime.now())
                 .event(Event.builder().id(eventId).build())
                 .requester(User.builder().id(userId).build())
-                .status(Status.PENDING)
+                .status(EventStatus.PENDING)
                 .build();
         Event event = eventOne(eventId, userId);
         Long requestsCount = requestsCount(event);
@@ -69,7 +69,7 @@ public class RequestPrivateServiceImpl implements RequestPrivateService {
                     throw new ValidationException(message, reason);
                 });
         if (!event.getRequestModeration()) {
-            request.setStatus(Status.CONFIRMED);
+            request.setStatus(EventStatus.CONFIRMED);
             event.incrementConfirmedRequests();
             eventRepository.save(event);
         }
@@ -90,17 +90,17 @@ public class RequestPrivateServiceImpl implements RequestPrivateService {
         Event event = eventRepository.findOne(((root, query, criteriaBuilder) ->
                 criteriaBuilder.and(
                         criteriaBuilder.equal(root.get("id"), request.getEvent().getId()),
-                        criteriaBuilder.equal(root.get("state"), State.PUBLISHED.ordinal())
+                        criteriaBuilder.equal(root.get("state"), EventState.PUBLISHED.ordinal())
                 ))).orElseThrow(() -> {
             String message = "Event not found";
             String reason = "Event not found";
             throw new NotFoundException(message, reason);
         });
-        if (request.getStatus().equals(Status.CONFIRMED)) {
+        if (request.getStatus().equals(EventStatus.CONFIRMED)) {
             event.decrementConfirmedRequests();
             eventRepository.save(event);
         }
-        request.setStatus(Status.CANCELED);
+        request.setStatus(EventStatus.CANCELED);
         return RequestMapper.toParticipationRequestDto(requestRepository.save(request));
     }
 
@@ -109,7 +109,7 @@ public class RequestPrivateServiceImpl implements RequestPrivateService {
                 criteriaBuilder.and(
                         criteriaBuilder.equal(root.get("id"), eventId),
                         criteriaBuilder.notEqual(root.get("initiator"), userId),
-                        criteriaBuilder.equal(root.get("state"), State.PUBLISHED.ordinal())
+                        criteriaBuilder.equal(root.get("state"), EventState.PUBLISHED.ordinal())
                 ))).orElseThrow(() -> {
             String message = String.format("Event with ID = %s not found", eventId);
             String reason = "Event not found";
@@ -121,7 +121,7 @@ public class RequestPrivateServiceImpl implements RequestPrivateService {
         return requestRepository.count((root, query, criteriaBuilder) ->
                 criteriaBuilder.and(
                         criteriaBuilder.equal(root.get("event"), event.getId()),
-                        criteriaBuilder.equal(root.get("status"), Status.CONFIRMED.ordinal())
+                        criteriaBuilder.equal(root.get("status"), EventStatus.CONFIRMED.ordinal())
                 ));
     }
 }

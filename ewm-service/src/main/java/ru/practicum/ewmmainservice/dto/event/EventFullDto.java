@@ -2,7 +2,7 @@ package ru.practicum.ewmmainservice.dto.event;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
-import ru.practicum.ewmmainservice.enums.State;
+import ru.practicum.ewmmainservice.enums.EventState;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -39,7 +39,7 @@ public class EventFullDto {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_TIME_FORMAT)
     private LocalDateTime publishedOn;
     private Boolean requestModeration;
-    private State state;
+    private EventState state;
     @NotNull
     private String title;
     @Builder.Default

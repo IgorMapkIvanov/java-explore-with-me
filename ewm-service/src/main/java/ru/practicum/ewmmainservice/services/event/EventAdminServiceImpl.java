@@ -10,7 +10,7 @@ import ru.practicum.ewmmainservice.dto.event.EventBaseDto;
 import ru.practicum.ewmmainservice.dto.event.EventFullDto;
 import ru.practicum.ewmmainservice.dto.event.NewEventDto;
 import ru.practicum.ewmmainservice.dto.location.Location;
-import ru.practicum.ewmmainservice.enums.State;
+import ru.practicum.ewmmainservice.enums.EventState;
 import ru.practicum.ewmmainservice.exceptions.NotFoundException;
 import ru.practicum.ewmmainservice.exceptions.ValidationException;
 import ru.practicum.ewmmainservice.mappers.event.EventMapper;
@@ -57,7 +57,7 @@ public class EventAdminServiceImpl implements EventAdminService {
                         criteriaBuilder.and(
                                 (users != null) ? root.get("initiator").in(users) : root.isNotNull(),
                                 (states != null) ? root.get("state").in(states.stream()
-                                        .map(el -> State.valueOf(el).ordinal())
+                                        .map(el -> EventState.valueOf(el).ordinal())
                                         .collect(Collectors.toList())) : root.isNotNull(),
                                 (categories != null) ? root.get("categories").in(categories) : root.isNotNull(),
                                 (!rangeStart.isEmpty() && !rangeEnd.isEmpty()) ?
@@ -128,7 +128,7 @@ public class EventAdminServiceImpl implements EventAdminService {
                     String reason = "Event not found";
                     throw new NotFoundException(message, reason);
                 });
-        event.setState(State.PUBLISHED);
+        event.setState(EventState.PUBLISHED);
         event.setPublishedOn(LocalDateTime.now());
         return EventMapper.toEventFullDto(eventRepository.save(event));
     }
@@ -149,7 +149,7 @@ public class EventAdminServiceImpl implements EventAdminService {
                     String reason = "Event not found";
                     throw new NotFoundException(message, reason);
                 });
-        event.setState(State.CANCELED);
+        event.setState(EventState.CANCELED);
         return EventMapper.toEventFullDto(event);
     }
 

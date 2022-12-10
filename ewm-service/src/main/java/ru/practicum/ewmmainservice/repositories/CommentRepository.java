@@ -20,4 +20,5 @@ public interface CommentRepository extends JpaRepository<Comment, Long>, JpaSpec
 
     List<Comment> findByAuthorId(Long authorId, Pageable pageable);
 
+    void deleteById(Long id);
 }

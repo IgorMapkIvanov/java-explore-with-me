@@ -29,8 +29,8 @@ public class CommentAdminController {
         return commentAdminService.getComments(userId, eventId, from, size);
     }
 
-    @DeleteMapping("/comment/{commentId}")
-    public void delete(@PathVariable Long commentId) {
+    @DeleteMapping("/{commentId}")
+    public void delete(@PathVariable @Positive Long commentId) {
         log.info("COMMENT_ADMIN_CONTROLLER: Delete comment with ID = {}", commentId);
         commentAdminService.delete(commentId);
     }

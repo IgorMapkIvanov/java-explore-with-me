@@ -4,7 +4,7 @@
         <persistence-units>
             <persistence-unit name="Default">
                 <packages>
-                    <package value="ru.practicum.explore.with.me" />
+                    <package value="ru.practicum.explore.with.me"/>
                 </packages>
             </persistence-unit>
         </persistence-units>

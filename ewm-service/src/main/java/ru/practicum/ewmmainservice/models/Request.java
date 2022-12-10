@@ -3,7 +3,7 @@ package ru.practicum.ewmmainservice.models;
 
 import lombok.*;
 import org.hibernate.Hibernate;
-import ru.practicum.ewmmainservice.enums.Status;
+import ru.practicum.ewmmainservice.enums.EventStatus;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -31,7 +31,7 @@ public class Request {
     private User requester;
     @Column(name = "status")
     @Enumerated(EnumType.ORDINAL)
-    private Status status;
+    private EventStatus status;
 
     @Override
     public boolean equals(Object o) {

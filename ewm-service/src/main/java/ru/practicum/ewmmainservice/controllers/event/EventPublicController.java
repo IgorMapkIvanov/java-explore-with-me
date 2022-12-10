@@ -6,12 +6,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.ewmmainservice.dto.events.EventFullDto;
-import ru.practicum.ewmmainservice.dto.events.EventShortDto;
+import ru.practicum.ewmmainservice.dto.event.EventFullDto;
+import ru.practicum.ewmmainservice.dto.event.EventShortDto;
 import ru.practicum.ewmmainservice.enums.EventSort;
 import ru.practicum.ewmmainservice.exceptions.ValidationException;
 import ru.practicum.ewmmainservice.pageable.EwmPageable;
-import ru.practicum.ewmmainservice.services.events.EventPublicService;
+import ru.practicum.ewmmainservice.services.event.EventPublicService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.Positive;

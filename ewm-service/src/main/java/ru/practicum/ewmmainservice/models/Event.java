@@ -3,8 +3,8 @@ package ru.practicum.ewmmainservice.models;
 import lombok.*;
 import org.hibernate.Hibernate;
 import org.hibernate.validator.constraints.Length;
-import ru.practicum.ewmmainservice.dto.locations.Location;
-import ru.practicum.ewmmainservice.enums.State;
+import ru.practicum.ewmmainservice.dto.location.Location;
+import ru.practicum.ewmmainservice.enums.EventState;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -54,7 +54,7 @@ public class Event {
     private Boolean requestModeration = true;
     @Enumerated(EnumType.ORDINAL)
     @Column(name = "state")
-    private State state;
+    private EventState state;
     @Column(name = "title")
     @Length(max = 100)
     private String title;

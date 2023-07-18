@@ -4,12 +4,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.ewmmainservice.dto.events.EventFullDto;
-import ru.practicum.ewmmainservice.dto.events.EventShortDto;
-import ru.practicum.ewmmainservice.dto.events.NewEventDto;
-import ru.practicum.ewmmainservice.dto.events.UpdateEventDto;
-import ru.practicum.ewmmainservice.dto.requests.ParticipationRequestDto;
-import ru.practicum.ewmmainservice.services.events.EventPrivateService;
+import ru.practicum.ewmmainservice.dto.event.EventFullDto;
+import ru.practicum.ewmmainservice.dto.event.EventShortDto;
+import ru.practicum.ewmmainservice.dto.event.NewEventDto;
+import ru.practicum.ewmmainservice.dto.event.UpdateEventDto;
+import ru.practicum.ewmmainservice.dto.request.ParticipationRequestDto;
+import ru.practicum.ewmmainservice.services.event.EventPrivateService;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;

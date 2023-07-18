@@ -5,10 +5,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.ewmmainservice.dto.users.NewUserRequest;
-import ru.practicum.ewmmainservice.dto.users.UserDto;
+import ru.practicum.ewmmainservice.dto.user.NewUserRequest;
+import ru.practicum.ewmmainservice.dto.user.UserDto;
 import ru.practicum.ewmmainservice.pageable.EwmPageable;
-import ru.practicum.ewmmainservice.services.users.UserAdminService;
+import ru.practicum.ewmmainservice.services.user.UserAdminService;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
